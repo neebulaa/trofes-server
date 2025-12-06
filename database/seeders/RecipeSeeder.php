@@ -14,25 +14,32 @@ class RecipeSeeder extends Seeder
     public function run(): void
     {
         $filePath = database_path('seeders/data/recipe.csv');
-        $csvData = array_map('str_getcsv', file($filePath));
 
-        // Remove header row
-        $header = array_shift($csvData);
+        if (!file_exists($filePath) || !is_readable($filePath)) {
+            throw new \Exception("CSV file not found or not readable at $filePath");
+        }
 
-        foreach ($csvData as $row) {
+        $csv = fopen($filePath, 'r');
+
+        // Read header row
+        $header = fgetcsv($csv);
+
+        while (($row = fgetcsv($csv)) !== false) {
             $data = array_combine($header, $row);
 
             Recipe::create([
                 'recipe_id' => $data['recipe_id'],
                 'title' => $data['title'],
-                'instructions' => $data['instructions'],
+                'instructions' => $data['instructions'], // supports commas & paragraphs
                 'slug' => $data['slug'],
                 'measured_ingredients' => $data['measured_ingredients'],
                 'calories' => $data['calories'],
                 'protein' => $data['protein'],
                 'fat' => $data['fat'],
-                'sodium' => $data['sodium'],
+                'sodium' => $data['sodium']
             ]);
         }
+
+        fclose($csv);
     }
 }
