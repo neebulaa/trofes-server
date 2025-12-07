@@ -16,6 +16,17 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory(10)->create();
+        User::create([
+            "full_name" => "Admin 7DS",
+            "password" => "sevendeadlysins",
+            "username" => "sevendeadlysins",
+            "email" => "sevendeadlysins@gmail.com",
+            "phone" => "089694636303",
+            "bio" => "There is no mercy for light",
+            "birth_date" => "18/03/2006",
+            
+            "is_admin" => true
+        ]);
         $this->call([
             GuideSeeder::class,
             AllergySeeder::class,
