@@ -1,0 +1,119 @@
+#contact-us {
+    padding: calc(4rem * var(--ui-scale)) 0;
+}
+
+#contact-us .hero-title {
+    font-size: clamp(4rem, 10vw, 6rem);
+    font-weight: 600;
+    line-height: 1.1;
+    max-width: 800px;
+    text-align: center;
+    margin: 1rem auto 5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.hero-title-bottom {
+    margin-left: 4rem;
+}
+
+/* #contact-us .hero-title span.green-block {
+    background: #22c55e;
+    color: #ffffff;
+    padding: 4px 18px;
+    border-radius: 6px;
+    display: inline-block;
+} */
+
+.contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+}
+
+.contact-info {
+    color: var(--neutral-700);
+    line-height: 1.7;
+}
+
+.contact-info strong {
+    font-weight: 600;
+}
+
+.contact-info .info-block {
+    margin-top: 1rem;
+}
+
+/* Social icons */
+.social-icons {
+    display: flex;
+    gap: 18px;
+    margin-top: 26px;
+}
+
+.social-icons a {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #111827;
+    font-size: 14px;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.social-icons a:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* RIGHT FORM */
+.contact-form label {
+    font-size: .9rem;
+    color: var(--neutral-600);
+    display: block;
+    margin-bottom: .5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+#contact-us .btn-submit {
+    margin-top: 1rem;
+    font-weight: 500 !important;
+}
+
+#contact-us textarea {
+    min-height: 140px;
+}
+
+@media (max-width: 900px) {
+    #contact-us .hide {
+        display: none;
+    }
+
+    #contact-us .hero-title {
+        align-items: center;
+        margin-bottom: 3rem;
+    }
+
+    .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .hero-title-bottom {
+        margin-left: 0;
+    }
+    .contact-form .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+

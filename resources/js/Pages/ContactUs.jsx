@@ -1,0 +1,70 @@
+import Layout from "../Layouts/Layout";
+
+import '../../css/ContactUs.css';
+
+export default function ContactUs(){
+    return (
+        <>
+            <section className="contact-us" id='contact-us'>
+                <div className="container">
+
+                    <h1 className="hero-title">
+                        <div className="hero-title-top">
+                            Ayo <span className="green-block">tumbuh</span> 
+                        </div>
+                        <div className="hero-title-bottom">
+                            <span className="hide">Ayo</span> bersama.
+                        </div>
+                    </h1>
+
+                    <div className="contact-layout">
+                        <div className="contact-info">
+                            <p>
+                                Jika Anda ingin berdiskusi lebih lanjut atau memiliki pertanyaan, jangan ragu untuk mengirimkan pesan ke email kami.
+                                Kami siap membantu Anda memulai perjalanan menuju pilihan makan yang lebih cerdas.
+                                Kami terbuka dari jam 08.00 - 18.00, hari Sen - Jum.
+                            </p>
+
+                            <div className="info-block">
+                                <p><strong>Hubungi kami:</strong> +62 898946353003</p>
+                                <p><strong>Sapa kami:</strong> sevendeadlysins@gmail.com</p>
+                                <p><strong>Alamat:</strong> Sentul City, Jl. Pakuan No.3, Sumur Batu, Babakan Madang, Bogor Regency, West Java 16810</p>
+                            </div>
+
+                            <div className="social-icons">
+                                <a href="#"><i className="fab fa-facebook-f"></i></a>
+                                <a href="#"><i className="fab fa-linkedin-in"></i></a>
+                                <a href="#"><i className="fab fa-instagram"></i></a>
+                                <a href="#"><i className="fab fa-youtube"></i></a>
+                            </div>
+                        </div>
+
+                        <div className="contact-form">
+                            <form id="contactForm">
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label for="name">Nama</label>
+                                        <input type="text" id="name" name="name" placeholder="seven deadly sins" required />
+                                    </div>
+                                    <div className="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="email" id="email" name="email" placeholder="emailanda@gmail.com" required />
+                                    </div>
+                                </div>
+
+                                <div className="form-group">
+                                    <label for="message">Pesan</label>
+                                    <textarea id="message" name="message" placeholder="Pesan Anda" required></textarea>
+                                </div>
+
+                                <button type="submit" className="btn-submit btn btn-fill">Kirim Pesan</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </>
+    );
+}
+
+ContactUs.layout = page => <Layout children={page}/>
