@@ -31,9 +31,9 @@ export default function Login() {
                 <p className="subtitle">Selamat datang di dunia penuh gizi</p>
 
                 <div className="wrapper">
-                    <FlashMessage className="mb-1"/>
 
                     <form onSubmit={handleSubmit}>
+                        <FlashMessage className="mb-1"/>
                         <div className="input-group">
                             <label htmlFor="login-cred">Email atau Username</label>
                             <input
