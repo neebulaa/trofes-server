@@ -1,12 +1,14 @@
 import '../../css/Navbar.css'
 import '../../css/Footer.css'
-import Navbar from '../Components/Navbar'
+import NavbarGuest from '../Components/NavbarGuest'
+import NavbarAuth from '../Components/NavbarAuth'
 import Footer from '../Components/Footer'
 
 import { Head, usePage } from '@inertiajs/react';
 
 export default function Layout({ children }) {
-    const { url } = usePage();
+    const { url, props } = usePage();
+    const { auth: { user } } = props;
 
     const hideLayout = ['/login', '/sign-up', '/onboarding'].includes(url);
 
@@ -37,7 +39,7 @@ export default function Layout({ children }) {
                 />
             </Head>
 
-            {!hideLayout && <Navbar />}
+            {!hideLayout && (user ? <NavbarAuth user={user}/> : <NavbarGuest />)}
 
             {children}
 
