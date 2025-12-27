@@ -1,10 +1,10 @@
-allergy_id,allergy_code,allergy_name
-1,dairy,Dairy
-2,egg,Egg
-3,fish,Fish
-4,shellfish,Shellfish
-5,soy,Soy
-6,sesame,Sesame
-7,wheat,Wheat
-8,peanut,Peanut
-9,tree_nut,Tree Nut
+allergy_id,allergy_code,allergy_name,examples
+1,dairy,Dairy,"milk, cheese, yogurt, whey"
+2,egg,Egg,"eggs, bread, cakes, pasta"
+3,fish,Fish,"fish, fish stock, seafood sauce"
+4,shellfish,Shellfish,"shrimp, lobster, crab"
+5,soy,Soy,"tofu, tempeh, soybeans"
+6,sesame,Sesame,"sesame seeds & oil"
+7,wheat,Wheat,"bread, pasta, gluten foods"
+8,peanut,Peanut,"peanuts & processed"
+9,tree_nut,Tree Nut,"almonds, pistachios, walnuts"

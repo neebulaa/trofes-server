@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('recipe_allergies', function (Blueprint $table) {
-            $table->id('recipe_allergy_id');
-            $table->foreignId('recipe_id')->constrained('recipes', 'recipe_id')->onUpdate('cascade')->onDelete('cascade');
+        Schema::create('user_allergies', function (Blueprint $table) {
+            $table->id('user_allergy_id');
+            $table->foreignId('user_id')->constrained('users', 'user_id')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('allergy_id')->constrained('allergies', 'allergy_id')->onUpdate('cascade')->onDelete('cascade');
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('recipe_allergies');
+        Schema::dropIfExists('user_allergies');
     }
 };

@@ -30,7 +30,7 @@ class RecipeSeeder extends Seeder
             Recipe::create([
                 'recipe_id' => $data['recipe_id'],
                 'title' => $data['title'],
-                'instructions' => $data['instructions'], // supports commas & paragraphs
+                'instructions' => $data['instructions'],
                 'slug' => $data['slug'],
                 'measured_ingredients' => $data['measured_ingredients'],
                 'calories' => $data['calories'],

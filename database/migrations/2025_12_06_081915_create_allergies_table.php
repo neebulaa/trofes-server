@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id('allergy_id');
             $table->string('allergy_code')->unique();
             $table->string("allergy_name");
+            $table->string('examples')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

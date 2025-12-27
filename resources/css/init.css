@@ -9,11 +9,35 @@
     --muted:#4b4b4b;
     --line:#e1e1e1;
     --white:#fff;
-    
-    --primary: #299B3F;
+
+
+    --primary-700: #299B3F;
     --primary-600: #2FB248;
-    --primary-50: #effff2;
+    --primary-500: #4EC565;
+    --primary-400: #70D583;
+    --primary-300: #89E79C;
+    --primary-200: #B1F5BF;
+    --primary-100: #D1FFDA;
+    --primary-50:  #e4ffe9;
+
     --secondary-700: #DF7C29;
+    --secondary-600: #F58D36;
+    --secondary-500: #FFA961;
+    --secondary-400: #FFB87D;
+    --secondary-300: #FFCA9F;
+    --secondary-200: #FFE1C8;
+    --secondary-100: #FFF0E3;
+    --secondary-50:  #FFF7F0;
+
+    --accent-info-700: #017AD3;
+    --accent-info-600: #0C8CE9;
+    --accent-info-500: #2C9DEF;
+    --accent-info-400: #48ACF4;
+    --accent-info-300: #64B9F6;
+    --accent-info-200: #91CEFA;
+    --accent-info-100: #CFE8FF;
+    --accent-info-50:  #F4FAFF;
+
     --neutral-700:#1f1f1f;
     --neutral-600: #4B4B4B;
     --neutral-500: #8E8E8E;
@@ -22,6 +46,16 @@
     --neutral-200: #EEEEEE;
     --neutral-100: #F5F5F5;
     --neutral-50: #FAFAFA;
+
+    --danger-700: #EC2D30;
+    --danger-600: #F64C4C;
+    --danger-500: #EB6F70;
+    --danger-400: #F49898;
+    --danger-300: #FFCCD2;
+    --danger-200: #FFEBEE;
+    --danger-100: #FEF2F2;
+    --danger-50: #FFFBFB;
+
 
     --radius: calc(16px * var(--ui-scale));
     --maxw: calc(1280px * var(--ui-scale));
@@ -57,30 +91,89 @@ img {
     display: block;
 }
 
-input, textarea {
+input, textarea, select {
     resize: none;
     font-size: inherit;
     font-family: inherit;
 }
 
-input[type="text"],
+label {
+    font-size: .9rem;
+    color: var(--neutral-600);
+    display: block;
+    margin-bottom: .25rem;
+}
+
+input, textarea, select {
+    outline: none;
+    border: none;
+    width: 100%;
+    font-size: .9rem;
+}
+
+input[type="text"]:not(.password-input input[type='text']),
 input[type="email"],
+input[type="date"],
+.password-input,
+.nohp-input,
+select,
 textarea {
     width: 100%;
     padding: 0.75rem 0.875rem;
     border-radius: 6px;
     border: 1px solid var(--neutral-500);
-    font-size: 14px;
-    outline: none;
     background: #ffffff;
     transition: 0.2s;
 }
 
-input[type="text"]:focus,
+input[type="text"]:focus:not(.password-input input[type='text']),
 input[type="email"]:focus,
-textarea:focus {
+input[type="date"]:focus,
+.nohp-input:has(input:focus),
+.password-input:has(input[type="password"]:focus, input[type='text']:focus),
+textarea:focus, select:focus {
     border-color: var(--primary-600);
     box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.15);
+}
+
+.input-group + .input-group {
+    margin-top: 1rem;
+}
+
+.nohp-input,
+.password-input {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+}
+
+.nohp-input {
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.nohp-input input {
+    padding: 0.75rem 0.875rem;
+}
+
+.nohp-input .phone-identifier{
+    font-size: .9rem;
+    font-weight: 500;
+    padding: 0.75rem 0.875rem;
+    background: var(--neutral-300);
+    border-right: 1px solid var(--neutral-500);
+}
+
+/* for password input */
+.eye-btn:hover {
+    opacity: 1;
+}
+
+.password-input .eye-btn {
+    cursor: pointer;
+    color: var(--neutral-500);
 }
 
 .green-block {
@@ -118,8 +211,8 @@ textarea:focus {
 }
 
 .btn:hover {
+    filter: brightness(.95);
     transform: translateY(calc(-2px * var(--ui-scale)));
-    filter: saturate(110%);
 }
 
 .btn-fill {
@@ -132,6 +225,9 @@ textarea:focus {
         rgba(47, 178, 72, 0.25); */
 }
 
+.btn-full {
+    width: 100%;
+}
 
 .btn-pill {
     background: var(--green);
@@ -152,8 +248,106 @@ textarea:focus {
     transform: translateY(calc(-2px * var(--ui-scale)));
 }
 
+.flash {
+    display: flex;
+    gap: .5rem;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: .5rem;
+    padding-inline: 1rem;
+    font-size: .9rem;
+    border: 1px solid var(--type-bold);
+    background: var(--type-bg);
+    color: var(--type-bold);
+}
+
+.flash > * {
+    padding-block: .75rem;
+}
+
+.flash-success {
+    --type-bold: var(--primary-700);
+    --type-bg: var(--primary-100);
+}
+
+.flash-error {
+    --type-bold: var(--danger-700);
+    --type-bg: var(--danger-100);
+}
+
+.flash-info {
+    --type-bold: var(--accent-info-700);
+    --type-bg: var(--accent-info-100);
+}
+
+.flash button.close-btn {
+    background: none;
+    border: none;
+    border-left: 1px solid var(--type-bold);
+    padding-left: .75rem;
+    font-size: 1rem;
+    cursor: pointer;
+    color: var(--type-bold);
+}
+
 .hide {
     opacity: 0;
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+
+.mt-05 {
+    margin-top: 0.5rem;
+}
+
+.mt-2 {
+    margin-top: 2rem;
+}
+
+.mb-1 {
+    margin-bottom: 1rem;
+}
+
+.mb-05 {
+    margin-bottom: 0.5rem;
+}
+
+.mb-2 {
+    margin-bottom: 2rem;
+}
+
+.ml-1 {
+    margin-left: 1rem;
+}
+
+.ml-05 {
+    margin-left: 0.5rem;
+}
+
+.ml-2 {
+    margin-left: 2rem;
+}
+
+.mr-1 {
+    margin-right: 1rem;
+}
+
+.mr-05 {
+    margin-right: 0.5rem;
+}
+
+.mr-2 {
+    margin-right: 2rem;
+}
+
+
+.error-text {
+    color: var(--danger-700);
+    font-size: .8rem;
+    margin-top: .25rem;
+    display: inline-block;
 }
 
 /* ===== Reveal ===== */

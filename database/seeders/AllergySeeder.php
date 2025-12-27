@@ -14,18 +14,26 @@ class AllergySeeder extends Seeder
     public function run(): void
     {
         $filePath = database_path('seeders/data/allergy.csv');
-        $csvData = array_map('str_getcsv', file($filePath));
 
-        // Remove header row
-        $header = array_shift($csvData);
+        if (!file_exists($filePath) || !is_readable($filePath)) {
+            throw new \Exception("CSV file not found or not readable at $filePath");
+        }
 
-        foreach ($csvData as $row) {
+        $csv = fopen($filePath, 'r');
+
+        // Read header row
+        $header = fgetcsv($csv);
+
+        while (($row = fgetcsv($csv)) !== false) {            
             $data = array_combine($header, $row);
 
             Allergy::create([
                 'allergy_code' => $data['allergy_code'],
-                'allergy_name' => $data['allergy_name']
+                'allergy_name' => $data['allergy_name'],
+                'examples' => $data['examples']
             ]);
         }
+
+        fclose($csv);
     }
 }

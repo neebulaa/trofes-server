@@ -19,6 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
          $middleware->web(append: [
             HandleInertiaRequests::class,
         ]);
+        // $middleware->redirectGuestsTo('/login');
+        $middleware->redirectGuestsTo(fn (Request $request) => route('login'));
+        $middleware->redirectUsersTo(fn (Request $request) => route('home'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {

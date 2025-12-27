@@ -42,17 +42,17 @@ export default function ContactUs(){
                         <div className="contact-form">
                             <form id="contactForm">
                                 <div className="form-row">
-                                    <div className="form-group">
+                                    <div className="input-group">
                                         <label for="name">Nama</label>
                                         <input type="text" id="name" name="name" placeholder="seven deadly sins" required />
                                     </div>
-                                    <div className="form-group">
+                                    <div className="input-group">
                                         <label for="email">Email</label>
                                         <input type="email" id="email" name="email" placeholder="emailanda@gmail.com" required />
                                     </div>
                                 </div>
 
-                                <div className="form-group">
+                                <div className="input-group">
                                     <label for="message">Pesan</label>
                                     <textarea id="message" name="message" placeholder="Pesan Anda" required></textarea>
                                 </div>

@@ -9,4 +9,14 @@ class Recipe extends Model
     protected $primaryKey = 'recipe_id';
 
     protected $guarded = ['recipe_id'];
+
+    public function dietaryPreferences()
+    {
+        return $this->belongsToMany(DietaryPreference::class, 'recipe_dietary_preferences', 'recipe_id', 'dietary_preference_id');
+    }
+
+    public function allergies()
+    {
+        return $this->belongsToMany(Allergy::class, 'recipe_allergies', 'recipe_id', 'allergy_id');
+    }
 }

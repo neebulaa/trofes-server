@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             "email" => "sevendeadlysins@gmail.com",
             "phone" => "089694636303",
             "bio" => "There is no mercy for light",
-            "birth_date" => "18/03/2006",
+            "birth_date" => "2006-03-18",
             
             "is_admin" => true
         ]);

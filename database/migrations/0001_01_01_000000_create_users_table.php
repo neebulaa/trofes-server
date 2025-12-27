@@ -19,10 +19,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('phone')->nullable();
-            $table->enum("gender", ['male', 'female', 'other'])->default('other');
+            $table->enum("gender", ['male', 'female', 'silent'])->nullable();
             $table->date('birth_date')->nullable();
             $table->string('profile_image')->nullable();
             $table->boolean('is_admin')->default(false);
+            $table->rememberToken();
             $table->timestamps();
         });
 

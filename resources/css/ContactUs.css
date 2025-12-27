@@ -71,11 +71,9 @@
 }
 
 /* RIGHT FORM */
-.contact-form label {
-    font-size: .9rem;
-    color: var(--neutral-600);
-    display: block;
-    margin-bottom: .5rem;
+
+.contact-us .input-group {
+    margin-top: 0 !important;
 }
 
 .form-row {

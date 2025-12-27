@@ -31,7 +31,7 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'password' => Hash::make('password'), // default password
             'phone' => $this->faker->phoneNumber(),
-            'gender' => $this->faker->randomElement(['male', 'female', 'other']),
+            'gender' => $this->faker->randomElement(['male', 'female', 'silent']),
             'birth_date' => $this->faker->date('Y-m-d', '2010-01-01'),
             'profile_image' => $this->faker->imageUrl(300, 300, 'people', true),
             'is_admin' => rand(0,1), // default

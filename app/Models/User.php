@@ -46,4 +46,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function dietaryPreferences()
+    {
+        return $this->belongsToMany(DietaryPreference::class, 'user_dietary_preferences', 'user_id', 'dietary_preference_id');
+    }
+
+    public function allergies()
+    {
+        return $this->belongsToMany(Allergy::class, 'user_allergies', 'user_id', 'allergy_id');
+    }
 }
