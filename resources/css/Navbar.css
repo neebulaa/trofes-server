@@ -213,8 +213,11 @@ header {
     .hamburger{
         z-index: 1200;
         display: flex;
-        order: -2;
+    }
+    
+    #auth-navbar .hamburger {
         margin-left: 0;
+        order: -2;
     }
 
     .nav-content-auth {

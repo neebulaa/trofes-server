@@ -35,9 +35,9 @@ export default function SignUp() {
                 </p>
 
                 <div className="wrapper">
-                    <FlashMessage className="mb-1" />
 
                     <form onSubmit={handleSubmit}>
+                        <FlashMessage className="mb-1" />
                         <div className="input-group">
                             <label htmlFor="username">Username</label>
                             <input
