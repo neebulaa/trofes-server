@@ -11,14 +11,14 @@ export default function Guides(){
                         alt=""
                         className="guides-scribble"
                     />
-                    <p className="guides-desc">
+                    <div className="guides-desc">
                         <div className="guides-cta-box">
                             <p className="about-text">
                                 Pahami lebih banyak tentang nutrisi yang Anda butuhkan untuk mendukung gaya hidup sehat dan membuat setiap pilihan makanan lebih tepat.
                             </p>
                             <a className="btn btn-line" href="#panduan">Pelajari Lebih Banyak</a>
                         </div>
-                    </p>
+                    </div>
                 </div>
 
                 <div className="guides-grid">

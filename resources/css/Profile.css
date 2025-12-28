@@ -8,7 +8,7 @@
 }
 
 #profile .profile-left {
-    flex: 1
+    flex: 1;
 }
 
 #profile .profile-right {
@@ -17,12 +17,13 @@
 
 /* profile left start */
 .profile-left .profile-image {
-    width: calc(clamp(200px, 50vw, 300px) * var(--ui-scale));
+    width: 300px;
     aspect-ratio: 1;
     border-radius: 50%;
     overflow: hidden;
     margin-bottom: 1rem;
     border: 1px solid var(--line);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .profile-left .profile-image img {
@@ -97,7 +98,10 @@
     border-radius: 4px;
     font-size: .85rem;
 }
+/* profile left end */
 
+
+/* profile right start */
 .profile-right {
     padding: 2rem;
     border: 1px solid var(--line);
@@ -105,13 +109,58 @@
     height: max-content;
 }
 
-.profile-right h2 {
+.profile-right h2.profile-right-title {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 1rem;
     margin-bottom: 1rem;
 }
 
-/* profile left end */
-
-
-/* profile right start */
-
+.profile-right .liked-recipes-count {
+    color: var(--neutral-600);
+    font-size: .9rem;
+    font-weight: 500;
+}
 /* profile right end */
+
+
+@media(max-width: 920px) {
+    #profile .container {
+        gap: 2rem;
+    }
+
+    .profile-left .profile-image {
+        width: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    #profile .container {
+        flex-direction: column;
+    }
+
+    .profile-left .profile-image {
+        width: 100px;
+    }
+
+    #profile {
+        padding-block: 2rem;
+    }
+
+    .profile-flex {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .edit-profile-btns {
+        display: flex;
+        gap: .5rem;
+        max-width: 150px;
+    }
+
+
+    #profile .profile-left,
+    #profile .profile-right {
+        flex: unset;
+    }
+}

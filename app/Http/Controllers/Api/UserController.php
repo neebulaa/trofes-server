@@ -16,7 +16,7 @@ class UserController extends Controller
     public function index(){
         return Inertia::render('Profile', [
             'user' => Auth::user()->load(['dietaryPreferences', 'allergies',  'likedRecipes']),
-            'dietaryPreferences' => DietaryPreference::all(),
+            'dietary_preferences' => DietaryPreference::all(),
             'allergies' => Allergy::all(),
         ]);
     }
