@@ -95,7 +95,7 @@ export default function NavbarAuth({user}) {
 
                 <div className="nav-content-auth">
                     <button type="button" className="custom-search-btn">
-                        <i class="fa-brands fa-searchengin"></i>
+                        <i className="fa-brands fa-searchengin"></i>
                         <p>Custom</p>
                     </button>
 

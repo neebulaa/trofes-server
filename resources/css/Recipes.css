@@ -1,0 +1,26 @@
+.recipes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.recipe-image {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    position: relative;
+}
+
+.recipe-tags {
+    position: absolute;
+    top: .5rem;
+    left: .5rem;
+}
+
+
+.recipe-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+

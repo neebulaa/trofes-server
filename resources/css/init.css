@@ -9,6 +9,7 @@
     --muted:#4b4b4b;
     --line:#e1e1e1;
     --white:#fff;
+    --text: #1f1f1f;
 
 
     --primary-700: #299B3F;
@@ -74,8 +75,8 @@ html {
 }
 
 body {
-    margin: 0;
     color: var(--text);
+    margin: 0;
     background: var(--neutral-50);
     line-height: 1.5;
     overflow-x: hidden;
@@ -225,6 +226,11 @@ textarea:focus, select:focus {
         rgba(47, 178, 72, 0.25); */
 }
 
+.btn-sm {
+    font-size: .85rem;
+    padding: 0.425rem 1.25rem;
+}
+
 .btn-full {
     width: 100%;
 }
@@ -360,7 +366,7 @@ textarea:focus, select:focus {
     display: flex;
     gap: .5rem;
     align-items: center;
-    padding-bottom: 0.575rem;
+    padding-bottom: 0.85rem;
     margin-bottom: 0.575rem;
     border-bottom: 1px solid var(--neutral-300);
 }
@@ -369,7 +375,7 @@ textarea:focus, select:focus {
     font-size: .85rem;
     display: flex;
     flex-direction: column;
-    line-height: 1.2;
+    line-height: 1.3;
     min-width: 0;
 }
 
@@ -404,6 +410,7 @@ textarea:focus, select:focus {
 
 .dropdown-item.active {
     font-weight: 500;
+    background: var(--neutral-50);
 }
 
 .profile-dropdown .dropdown-item {
@@ -428,6 +435,55 @@ textarea:focus, select:focus {
 }
 
 
+/* recipe cards and container */
+.recipes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.recipe-image {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border: 1px solid var(--neutral-300);
+}
+
+.recipe-tags {
+    position: absolute;
+    top: .5rem;
+    left: .5rem;
+}
+
+.recipe-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.recipe-content h3 {
+    font-size: 1.125rem !important;
+    font-weight: 600;
+    margin-top: .75rem;
+}
+
+.recipe-info {
+    margin-top: .5rem;
+    display: flex;
+    gap: 1rem;
+    font-size: .85rem;
+    color: var(--neutral-600);
+}
+
+
+.recipe-info-list {
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+}
 
 /* class utility */
 .hide {

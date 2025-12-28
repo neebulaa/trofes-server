@@ -179,6 +179,7 @@ header {
     border-radius: 100px;
     background: var(--primary-600);
     cursor: pointer;
+    font-size: .9rem;
 }
 
 .nav-content-auth .custom-search-btn i {

@@ -26,10 +26,16 @@ class RecipeSeeder extends Seeder
 
         while (($row = fgetcsv($csv)) !== false) {
             $data = array_combine($header, $row);
+            $data['cooking_time'] = ($data['cooking_time'] === '' || $data['cooking_time'] === null)
+            ? null
+            : (float) $data['cooking_time'];
 
             Recipe::create([
                 'recipe_id' => $data['recipe_id'],
                 'title' => $data['title'],
+                'rating' => $data['rating'],
+                'image' => $data['image'],
+                'cooking_time' => $data['cooking_time'],
                 'instructions' => $data['instructions'],
                 'slug' => $data['slug'],
                 'measured_ingredients' => $data['measured_ingredients'],

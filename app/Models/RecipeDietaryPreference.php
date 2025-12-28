@@ -7,5 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class RecipeDietaryPreference extends Model
 {
     protected $primaryKey = 'recipe_dietary_preference_id';
+    public $timestamps = false;
     protected $guarded = ['recipe_dietary_preference_id'];
 }

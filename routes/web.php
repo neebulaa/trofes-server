@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\OnboardingController;
 
 // Route::get('/', function () {
@@ -26,10 +27,7 @@ Route::get('/contact-us', function(){
 });
 
 Route::middleware('auth')->group(function(){
-    // Route::get('/profile', function(){
-    //     return Inertia::render('Profile');
-    // });
-
+    Route::get('/profile', [UserController::class, 'index']);
     Route::get('/onboarding', [OnboardingController::class, 'onboarding']);
     Route::post('/onboarding/profile-setup', [OnboardingController::class, 'setupProfile']);
     Route::post('/onboarding/dietary-preferences-setup', [OnboardingController::class, 'setupDietaryPreferences']);

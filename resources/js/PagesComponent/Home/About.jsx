@@ -30,7 +30,7 @@ export default function About(){
                     </p>
 
                     <a className="btn btn-line" href="#hubungi">
-                    Hubungi Kami Sekarang
+                        Hubungi Kami Sekarang
                     </a>
                 </div>
             </div>

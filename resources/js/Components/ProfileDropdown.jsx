@@ -1,11 +1,16 @@
-import { Link, useForm } from '@inertiajs/react'
+import { Link, useForm, usePage } from '@inertiajs/react'
 import { useState, useRef, useEffect } from 'react'
 
 export default function ProfileDropdown({ user }) {
     const [open, setOpen] = useState(false)
     const dropdownRef = useRef(null)
+    const {url} = usePage()
 
     const { post, processing } = useForm()
+
+    const isActive = (path) => {
+        return url === path;
+    };
 
     useEffect(() => {
         function handleClickOutside(e) {
@@ -55,10 +60,12 @@ export default function ProfileDropdown({ user }) {
                     </div>
                 </div>
 
-                <div className="dropdown-item">
+                <Link 
+                className={`dropdown-item ${isActive('/profile') ? 'active' : ''}`}
+                href="/profile">
                     <i className="fa-regular fa-user"></i>
-                    <Link href="/profile">Profile</Link>
-                </div>
+                    <p>Profile</p>
+                </Link>
 
                 <div className="dropdown-item">
                     <i className="fa-solid fa-arrow-right-from-bracket"></i>
