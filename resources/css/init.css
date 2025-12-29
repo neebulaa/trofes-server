@@ -424,7 +424,7 @@ textarea:focus, select:focus,
 
 
 /* custom dropdown */
-.dropdown, .profile-dropdown {
+.dropdown, .profile-dropdown, .edit-profile-dropdown {
     position: relative;
     width: max-content;
     color: var(--neutral-700);

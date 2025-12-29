@@ -1,6 +1,7 @@
 import { useForm } from '@inertiajs/react'
 import { useState } from 'react'
 import CustomDatalist from '../../Components/CustomDatalist'
+import EditProfileDropdown from './EditProfileDropdown'
 
 export default function ProfileEditForm({
     user,
@@ -20,6 +21,8 @@ export default function ProfileEditForm({
         dietary_preferences: user.dietary_preferences?.map(d => d.dietary_preference_id) || [],
     })
 
+    const [imgSrc, setImgSrc] = useState(user.profile_image || null)
+    
     const [selectedAllergies, setSelectedAllergies] = useState(
         user.allergies?.map(a => ({
             value: a.allergy_id,
@@ -65,16 +68,13 @@ export default function ProfileEditForm({
             <div className="profile-image-container">
                 <div className="profile-image">
                     <img
-                        src={user.profile_image
-                            ? user.profile_image
+                        src={imgSrc
+                            ? imgSrc
                             : './assets/sample-images/default-profile.png'}
                         alt={`profile-${user.username}`}
                     />
                 </div>
-                <div className="profile-image-edit-badge">
-                    <i className="fa-solid fa-pen"></i>
-                    <p>Edit</p>
-                </div>
+                <EditProfileDropdown setImgSrc={setImgSrc} />
             </div>
 
             <div className="input-group input-sm">
