@@ -9,11 +9,11 @@ export default function ProfileInfo({user, handleEditProfile}){
         <div className="profile-flex">
             <div className="profile-image">
                 <img
-                    src={user.profile_image
-                        ? user.profile_image
+                    src={ user.profile_image
+                        ? './storage/' + user.profile_image
                         : './assets/sample-images/default-profile.png'}
-                        alt={`profile-${user.username}`}
-                        />
+                    alt={`profile-${user.username}`}
+                />
             </div>
             <div className="profile-name">
                 <h2 className="profile-fullname">{user.full_name}</h2>

@@ -40,7 +40,7 @@ export default function ProfileDropdown({ user }) {
             >
                 <img
                     src={user.profile_image
-                        ? user.profile_image
+                        ? './storage/' + user.profile_image
                         : './assets/sample-images/default-profile.png'}
                     alt={`profile-${user.username}`}
                 />
@@ -50,7 +50,7 @@ export default function ProfileDropdown({ user }) {
                 <div className="profile-dropdown-desc">
                     <img
                         src={user.profile_image
-                            ? user.profile_image
+                            ? './storage/' + user.profile_image
                             : './assets/sample-images/default-profile.png'}
                         alt={`profile-${user.username}`}
                     />

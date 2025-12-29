@@ -1,6 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
 
-export default function EditProfileDropdown({ setImgSrc }) {
+export default function EditProfileDropdown({
+    currentImage,
+    onUpload,
+    onRemove,
+}) {
     const [open, setOpen] = useState(false)
     const dropdownRef = useRef(null)
     const fileInputRef = useRef(null)
@@ -16,32 +20,16 @@ export default function EditProfileDropdown({ setImgSrc }) {
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
-    function handleUploadFromDevice() {
-        fileInputRef.current?.click()
-        setOpen(false)
-    }
-
     function handleFileChange(e) {
         const file = e.target.files[0]
         if (!file) return
-
-        const reader = new FileReader()
-        reader.onload = () => {
-            setImgSrc(reader.result)
-        }
-        reader.readAsDataURL(file)
-    }
-
-    function handleRemovePhoto() {
-        setImgSrc(null)
+        onUpload(file)
+        e.target.value = ''
         setOpen(false)
     }
 
     return (
-        <div
-            ref={dropdownRef}
-            className={`edit-profile-dropdown ${open ? 'open' : ''}`}
-        >
+        <div ref={dropdownRef} className={`edit-profile-dropdown ${open ? 'open' : ''}`}>
             <button
                 type="button"
                 className="profile-image-edit-badge"
@@ -60,19 +48,23 @@ export default function EditProfileDropdown({ setImgSrc }) {
             />
 
             <div className="dropdown-menu">
-                <div
-                    className="dropdown-item"
-                    onClick={handleUploadFromDevice}
-                >
+                <div className="dropdown-item" onClick={() => fileInputRef.current.click()}>
                     Upload from Device
                 </div>
 
-                <div
-                    className="dropdown-item danger"
-                    onClick={handleRemovePhoto}
-                >
-                    Remove photo
-                </div>
+                {currentImage && (
+                    <div 
+                        className="dropdown-item danger"
+                        onClick={() => {
+                            if (window.confirm('Are you sure you want to remove your profile photo?')) {
+                                setOpen(false);
+                                onRemove();
+                            }
+                        }}
+                    >
+                        Remove photo
+                    </div>
+                )}
             </div>
         </div>
     )

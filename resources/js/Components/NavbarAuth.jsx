@@ -1,12 +1,15 @@
-import { Link, usePage } from '@inertiajs/react';
-import Dropdown from './Dropdown';
-import ProfileDropdown from './ProfileDropdown';
-import { useState } from 'react';
+import { Link, usePage } from '@inertiajs/react'
+import Dropdown from './Dropdown'
+import ProfileDropdown from './ProfileDropdown'
+import { useState } from 'react'
 
-export default function NavbarAuth({user}) {
-    const [open, setOpen] = useState(false);
-    const [openSearch, setOpenSearch] = useState(false);
-    const { url } = usePage();
+export default function NavbarAuth({ user }) {
+    const { url } = usePage()
+
+    const [open, setOpen] = useState(false)
+
+    const [openSearch, setOpenSearch] = useState(false)
+    const [renderSearch, setRenderSearch] = useState(false)
 
     const categoryOptions = [
         { label: 'Recipes', value: 'recipe' },
@@ -15,47 +18,73 @@ export default function NavbarAuth({user}) {
 
     const [category, setCategory] = useState(categoryOptions[0])
 
-    const isActive = (path) => {
-        return url === path;
-    };
+    const isActive = (path) => url === path
 
-    function openSearchBar(){
-        setOpenSearch(!openSearch);
+    function openNavbar() {
+        setOpen(!open)
     }
 
-    function openNavbar(){
-        setOpen(!open);
+    function handleNavigate() {
+        setOpen(false)
     }
 
-    function handleNavigate(){
-        setOpen(false);
+    function openSearchBar() {
+        if (!renderSearch) {
+            setRenderSearch(true)
+            requestAnimationFrame(() => {
+                setOpenSearch(true)
+            })
+        } else {
+            setOpenSearch(false)
+        }
     }
 
     return (
         <header id="auth-navbar">
             <nav className={`container nav ${open ? 'nav-open' : ''}`}>
                 <div className="logo">
-                    <img src="/assets/logo/logo-transparent.png" alt="Trofes Logo" />
+                    <img
+                        src="/assets/logo/logo-transparent.png"
+                        alt="Trofes Logo"
+                    />
                 </div>
-                
-                <div className="nav-search-toggle" onClick={openSearchBar}>
+
+                <div
+                    className="nav-search-toggle"
+                    onClick={openSearchBar}
+                >
                     <i className="fa-solid fa-magnifying-glass"></i>
                 </div>
 
-                <div className={`nav-search-container` + (openSearch ? ' nav-search-open' : '')}>
-                    <div className="nav-search">
-                        <div className="nav-search-icon">
-                            <i className="fa-solid fa-magnifying-glass"></i>
-                        </div>
+                {renderSearch && (
+                    <div
+                        className={`nav-search-container${
+                            openSearch ? ' nav-search-open' : ''
+                        }`}
+                        onTransitionEnd={() => {
+                            if (!openSearch) {
+                                setRenderSearch(false)
+                            }
+                        }}
+                    >
+                        <div className="nav-search">
+                            <div className="nav-search-icon">
+                                <i className="fa-solid fa-magnifying-glass"></i>
+                            </div>
 
-                        <Dropdown
-                            options={categoryOptions}
-                            value={category}
-                            onChange={setCategory}
-                        />
-                        <input type="text"  placeholder="What are you looking for?" />
+                            <Dropdown
+                                options={categoryOptions}
+                                value={category}
+                                onChange={setCategory}
+                            />
+
+                            <input
+                                type="text"
+                                placeholder="What are you looking for?"
+                            />
+                        </div>
                     </div>
-                </div>
+                )}
 
                 <div className="nav-content">
                     <div className="nav-links">
@@ -94,22 +123,27 @@ export default function NavbarAuth({user}) {
                 </div>
 
                 <div className="nav-content-auth">
-                    <button type="button" className="custom-search-btn">
+                    <button
+                        type="button"
+                        className="custom-search-btn"
+                    >
                         <i className="fa-brands fa-searchengin"></i>
                         <p>Custom</p>
                     </button>
 
-                    <ProfileDropdown 
-                        user = {user} 
-                    />
+                    <ProfileDropdown user={user} />
                 </div>
 
-                <button className="hamburger" aria-label="menu" onClick={openNavbar}>
+                <button
+                    className="hamburger"
+                    aria-label="menu"
+                    onClick={openNavbar}
+                >
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
             </nav>
         </header>
-    );
+    )
 }

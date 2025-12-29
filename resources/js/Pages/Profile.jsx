@@ -23,12 +23,11 @@ export default function Profile({user, allergies, dietary_preferences}){
                 <div className="profile-left">
                     {
                         onEdit ?
-                        <ProfileEditForm user={user} allergies={allergies} dietary_preferences={dietary_preferences} handleEditProfile={handleEditProfile} /> 
+                        <ProfileEditForm user={user} allergies={allergies} dietary_preferences={dietary_preferences} handleEditProfile={handleEditProfile} />
                         : <ProfileInfo user={user} handleEditProfile={handleEditProfile} />
                     }
                 </div>
 
-                {/* recipes that is liked */}
                 <div className="profile-right">
                     <h2 className="profile-right-title">Liked Recipes</h2>
                     {

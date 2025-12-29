@@ -182,16 +182,21 @@
         width: 250px;
     }
 
-    .profile-image-edit-badge {
+    #profile .edit-profile-dropdown {
         font-size: .9rem;
-        bottom: 1rem;
-        right: 1rem;
     }
+
 }
 
 @media (max-width: 768px) {
     #profile .container {
         flex-direction: column;
+    }
+
+    #profile .edit-profile-dropdown {
+        font-size: .8rem;
+        bottom: 1rem;
+        right: -.5rem;
     }
 
     .profile-left .profile-image {
@@ -201,8 +206,8 @@
     .profile-image-edit-badge {
         font-size: .8rem;
         bottom: 0rem;
-        right: 1rem;
-        translate: 50% -50%;
+        right: 0rem;
+        /* translate: 50% -50%; */
     }
 
     #profile {

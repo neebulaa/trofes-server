@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\DietaryPreference;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 function normalizePhone($phone){
     if($phone == null) return null;
@@ -83,4 +84,42 @@ class UserController extends Controller
             'message' => 'Profile updated successfully.'
         ]);
     }
+
+    public function updateProfileImage(Request $request)
+    {
+        $request->validate([
+            'profile_image' => ['required', 'image', 'max:2048'],
+        ]);
+
+        $user = $request->user();
+
+        if ($user->profile_image) {
+            Storage::disk('public')->delete($user->profile_image);
+        }
+
+        $path = $request->file('profile_image')
+            ->store('profile-images', 'public');
+
+        $user->update([
+            'profile_image' => $path,
+        ]);
+
+        return back()->with('flash', ['type' => 'success', 'message' => 'Profile image updated']);
+    }
+    
+    public function removeProfileImage(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->profile_image) {
+            Storage::disk('public')->delete($user->profile_image);
+            
+            $user->update([
+                'profile_image' => null,
+            ]);
+        }
+
+        return back()->with('flash', ['type' => 'success', 'message' => 'Profile image removed']);
+    }
+
 }

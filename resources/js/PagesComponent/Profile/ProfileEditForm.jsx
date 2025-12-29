@@ -2,6 +2,7 @@ import { useForm } from '@inertiajs/react'
 import { useState } from 'react'
 import CustomDatalist from '../../Components/CustomDatalist'
 import EditProfileDropdown from './EditProfileDropdown'
+import UploadImageModal from './UploadImageModal'
 
 export default function ProfileEditForm({
     user,
@@ -9,7 +10,7 @@ export default function ProfileEditForm({
     allergies,
     dietary_preferences
 }) {
-    const { data, setData, put, processing, errors } = useForm({
+    const { data, setData, put, delete: destroy, processing, errors } = useForm({
         full_name: user.full_name || '',
         username: user.username || '',
         gender: user.gender || '',
@@ -21,8 +22,6 @@ export default function ProfileEditForm({
         dietary_preferences: user.dietary_preferences?.map(d => d.dietary_preference_id) || [],
     })
 
-    const [imgSrc, setImgSrc] = useState(user.profile_image || null)
-    
     const [selectedAllergies, setSelectedAllergies] = useState(
         user.allergies?.map(a => ({
             value: a.allergy_id,
@@ -53,13 +52,35 @@ export default function ProfileEditForm({
         )
     }
 
-    function handleSubmit(e) {
-        console.log('submitted');
-        e.preventDefault()
-        put('/profile/update', {
+    const [imgSrc, setImgSrc] = useState(user.profile_image || null)
+    const [rawImage, setRawImage] = useState(null)
+    const [openModal, setOpenModal] = useState(false)
+
+    function handleImageSelected(file) {
+        setRawImage(file)
+        setOpenModal(true)
+    }
+
+    function handleImageSaved(previewUrl) {
+        setImgSrc(previewUrl)
+    }
+
+    function handleRemoveImage() {
+        setImgSrc(null);
+        setRawImage(null);
+        
+        destroy('/profile/remove-profile-image', {
             onSuccess: () => {
-                handleEditProfile()
+                setImgSrc(null);
             }
+        });
+    }
+
+    function handleSubmit(e) {
+        e.preventDefault()
+
+        put('/profile/update', {
+            onSuccess: handleEditProfile,
         })
     }
 
@@ -68,13 +89,26 @@ export default function ProfileEditForm({
             <div className="profile-image-container">
                 <div className="profile-image">
                     <img
-                        src={imgSrc
-                            ? imgSrc
-                            : './assets/sample-images/default-profile.png'}
+                        src={user.profile_image
+                        ? './storage/' + user.profile_image
+                        : './assets/sample-images/default-profile.png'}
                         alt={`profile-${user.username}`}
                     />
                 </div>
-                <EditProfileDropdown setImgSrc={setImgSrc} />
+
+                <EditProfileDropdown
+                    currentImage={imgSrc}
+                    onUpload={handleImageSelected}
+                    onRemove={handleRemoveImage}
+                />
+
+                {openModal && (
+                    <UploadImageModal
+                        file={rawImage}
+                        onSaved={handleImageSaved}
+                        onClose={() => setOpenModal(false)}
+                    />
+                )}
             </div>
 
             <div className="input-group input-sm">
@@ -125,7 +159,7 @@ export default function ProfileEditForm({
                     onChange={e => setData('email', e.target.value)}
                     // disabled={true}
                     // readOnly={true}
-                 />
+                    />
                 {errors.email && <small className="error-text">{errors.email}</small>}
             </div>
 
@@ -180,8 +214,8 @@ export default function ProfileEditForm({
                     type="submit"
                     className="btn-full btn btn-fill btn-sm"
                     disabled={processing}
-                    >
-                    Save
+                >
+                    Save Profile
                 </button>
 
                 <button
