@@ -33,7 +33,10 @@ class GuideController extends Controller
 
     public function show(Request $request, Guide $guide){
         return Inertia::render('GuideDetail', [
-            'guide' => $guide
+            'guide' => GuideResource::make($guide),
+            'next_guide' => GuideResource::make(Guide::where('guide_id', '>', $guide->guide_id)->orderBy('guide_id')->first()),
+            'prev_guide' => GuideResource::make(Guide::where('guide_id', '<', $guide->guide_id)->orderBy('guide_id', 'desc')->first()),
+            'other_guides' => GuideResource::collection(Guide::where('guide_id', '!=', $guide->guide_id)->inRandomOrder()->limit(5)->get()),
         ]);
     }
 }

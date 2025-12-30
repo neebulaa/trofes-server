@@ -1,0 +1,101 @@
+#guide-detail {
+    padding: 4rem 0;
+}
+
+#guide-detail .guide-detail-container {
+    display: flex;
+    gap: 4rem;
+}
+
+.guide-detail-container .guide-content {
+    flex: 3;
+}
+
+.guide-detail-container .guide-other {
+    flex: 2;
+}
+
+.guide-content h1 {
+    margin-top: 1rem;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.guide-detail-navigation {
+    border-top: 1px solid var(--neutral-300);
+    margin-top: 4rem;
+    padding-top: 2rem;
+}
+
+.guide-detail-navigation h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    /* line-height: 1.2; */
+}
+
+.guide-detail-navigation p {
+    margin-top: .5rem;
+    color: var(--muted);
+}
+
+.guide-navigators {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.guide-other {
+    position: sticky;
+    top: 6rem;
+    border: 1px solid var(--neutral-300);
+    border-radius: 8px;
+    padding: 1rem;
+    height: max-content;
+}
+
+.guide-other h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.guide-other-list {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.guide-other-item {
+    display: flex;
+    gap: .5rem;
+}
+
+.guide-other-item-image {
+    flex-shrink: 0;
+    width: 120px;
+    height: 60px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.guide-other-item h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.guide-other-item-content p {
+    font-size: .9rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    color: var(--muted);
+    max-width: 150px;
+}
+
+.guide-other-item-content .date {
+    font-size: .8rem;
+    color: var(--neutral-500);
+    font-weight: 600;
+}

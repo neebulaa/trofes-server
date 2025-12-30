@@ -1,7 +1,7 @@
 import Layout from "../Layouts/Layout";
 import { useMemo, useState } from "react";
 import "../../css/GuidesPage.css";
-import { router, useForm } from "@inertiajs/react";
+import { Link, router, useForm } from "@inertiajs/react";
 import Paginator from "../Components/Paginator";
 import Dropdown from "../Components/Dropdown";
 
@@ -109,16 +109,16 @@ export default function Guides({ guides, filters }) {
 
                 <div className="guides-page-list">
                     {displayGuides.map((guide) => (
-                        <div className="guide-card" key={guide.guide_id}>
+                        <Link href={`/guides/${guide.slug}`} className="guide-card" key={guide.guide_id}>
                             <div className="guide-card-image">
                                 <img src={guide.image} alt={guide.title} />
                             </div>
                             <h2 className="guide-card-title">{guide.title}</h2>
                             <p className="guide-card-excerpt">{guide.excerpt}</p>
                             <p className="guide-card-date">
-                                {new Date(guide.published_at).toLocaleDateString()}
+                                {new Date(guide.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                             </p>
-                        </div>
+                        </Link>
                     ))}
                 </div>
 
