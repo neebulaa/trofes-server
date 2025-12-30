@@ -1,7 +1,7 @@
 import { Link, usePage } from '@inertiajs/react'
 import Dropdown from './Dropdown'
 import ProfileDropdown from './ProfileDropdown'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function NavbarAuth({ user }) {
     const { url } = usePage()
@@ -9,7 +9,26 @@ export default function NavbarAuth({ user }) {
     const [open, setOpen] = useState(false)
 
     const [openSearch, setOpenSearch] = useState(false)
-    const [renderSearch, setRenderSearch] = useState(false)
+    const [renderSearch, setRenderSearch] = useState(() => {
+        return window.innerWidth > 768 ? true : false
+    })
+
+    useEffect(() => {
+        function handleResize(){
+            if(window.innerWidth <= 768){
+                setRenderSearch(false)
+                setOpenSearch(false)
+            } else {
+                setRenderSearch(true)
+            }
+        }
+
+        window.addEventListener('resize', handleResize)
+
+        return () => {
+            window.removeEventListener('resize', handleResize)
+        }
+    }, [window.innerWidth]);
 
     const categoryOptions = [
         { label: 'Recipes', value: 'recipe' },
