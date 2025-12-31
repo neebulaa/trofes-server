@@ -22,8 +22,17 @@ function normalizePhone($phone){
 class UserController extends Controller
 {
     public function index(){
+        $user = Auth::user()->load(['dietaryPreferences', 'allergies']);
+
+        $likedRecipes = Auth::user()
+            ->likedRecipes()
+            ->latest()
+            ->paginate(6)
+            ->withQueryString();
+
         return Inertia::render('Profile', [
-            'user' => Auth::user()->load(['dietaryPreferences', 'allergies',  'likedRecipes']),
+            'user' => $user,
+            'liked_recipes' => $likedRecipes,
             'dietary_preferences' => DietaryPreference::all(),
             'allergies' => Allergy::all(),
         ]);

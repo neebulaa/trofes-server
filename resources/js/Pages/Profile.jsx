@@ -4,11 +4,13 @@ import RecipeCard from '../Components/RecipeCard';
 import ProfileInfo from '../PagesComponent/Profile/ProfileInfo';
 import ProfileEditForm from '../PagesComponent/Profile/ProfileEditForm';
 import FlashMessage from '../Components/FlashMessage';
+import { router } from "@inertiajs/react";
 
 import '../../css/Profile.css';
 import { useState } from 'react';
+import Paginator from '../Components/Paginator';
 
-export default function Profile({user, allergies, dietary_preferences}){
+export default function Profile({user, liked_recipes, allergies, dietary_preferences}){
     const [onEdit, setOnEdit] = useState(false);
 
     function handleEditProfile(){
@@ -31,14 +33,14 @@ export default function Profile({user, allergies, dietary_preferences}){
                 <div className="profile-right">
                     <h2 className="profile-right-title">Liked Recipes</h2>
                     {
-                        user.liked_recipes.length > 0 &&
-                        <p className='mb-05 liked-recipes-count'>Liked {user.liked_recipes.length} recipes</p>
+                        liked_recipes.data.length > 0 &&
+                        <p className='mb-05 liked-recipes-count'>Liked {liked_recipes.data.length} recipes</p>
                     }
 
                     <div className="profile-liked-recipes-container recipes-container">
                         {
-                            user.liked_recipes.length > 0 ? (
-                                user.liked_recipes.map((recipe) => (
+                            liked_recipes.data.length > 0 ? (
+                                liked_recipes.data.map((recipe) => (
                                     <RecipeCard key={recipe.recipe_id} recipe={recipe} />
                                 ))
                             ) : (
@@ -49,6 +51,10 @@ export default function Profile({user, allergies, dietary_preferences}){
                             )
                         }
                     </div>
+
+                    {liked_recipes.data.length > 0 &&
+                        <Paginator paginator={liked_recipes} onNavigate={(url) => router.get(url)}/>
+                    }
                 </div>
             </div>
         </section>
