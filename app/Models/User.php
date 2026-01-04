@@ -50,7 +50,19 @@ class User extends Authenticatable
     }
 
     public function getPublicProfileImageAttribute(){
-        return $this->profile_image ? asset('storage') . '/' . $this->profile_image : asset('assets/sample-images/default-profile.png');
+        if (! $this->profile_image) {
+            return asset('assets/sample-images/default-profile.png');
+        }
+
+        // if already a full URL (Google avatar images)
+        if (
+            str_starts_with($this->profile_image, 'http://') ||
+            str_starts_with($this->profile_image, 'https://')
+        ) {
+            return $this->profile_image;
+        }
+
+        return asset('storage/' . $this->profile_image);
     }
 
     public function dietaryPreferences()

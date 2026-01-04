@@ -17,7 +17,7 @@
 
 /* profile left start */
 .profile-left .profile-image {
-    width: 300px;
+    width: 280px;
     aspect-ratio: 1;
     border-radius: 50%;
     overflow: hidden;
@@ -160,6 +160,8 @@
 }
 
 .profile-right h2.profile-right-title {
+    font-size: 1.1rem;
+    font-weight: 600;
     border-bottom: 1px solid var(--line);
     padding-bottom: 1rem;
     margin-bottom: 1rem;

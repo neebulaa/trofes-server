@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OnboardingController;
 use App\Models\Guide;
+use App\Http\Controllers\Auth\GoogleAuthController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -59,6 +60,13 @@ Route::middleware('guest')->group(function(){
     Route::post('/login', [AuthController::class, 'authenticate']);
     Route::get('/sign-up', [AuthController::class, 'signup']);
     Route::post('/sign-up', [AuthController::class, 'register']);
+
+    // oauth google
+    Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])
+    ->name('auth.google.redirect');
+
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
+        ->name('auth.google.callback');
 });
 
 Route::fallback(function(){

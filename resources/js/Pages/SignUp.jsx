@@ -146,7 +146,12 @@ export default function SignUp() {
                             {processing ? 'Signing up...' : 'Sign Up'}
                         </button>
 
-                        <button type="button" className="btn btn-google btn-full">
+
+                        <button
+                            type="button"
+                            className="btn btn-google btn-full"
+                            onClick={() => (window.location.href = '/auth/google/redirect')}
+                        >
                             <img src="/assets/icons/google.png" alt="Google" />
                             Sign Up with Google
                         </button>

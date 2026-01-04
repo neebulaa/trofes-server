@@ -21,8 +21,8 @@
                 <td style="padding:26px 24px; color:#111827;">
                 <h1 style="margin:0 0 10px; font-size:22px;">Reset Password</h1>
                 <p style="margin:0 0 16px; color:#4b5563; font-size:14px; line-height:1.6;">
-                    Halo {{ $user->name ?? 'Pengguna' }}, kami menerima permintaan untuk reset password akun kamu.
-                    Klik tombol di bawah ini untuk membuat password baru.
+                    Hello {{ $user->full_name ?? 'User' }}, we received a request to reset the password for your account.
+                    Click the button below to create a new password.
                 </p>
 
                 <div style="margin:22px 0;">
@@ -33,7 +33,7 @@
                 </div>
 
                 <p style="margin:0 0 8px; color:#6b7280; font-size:13px; line-height:1.6;">
-                    Jika tombol tidak bisa diklik, copy link ini:
+                    If the button above does not work, copy and paste the link below into your browser:
                 </p>
                 <p style="word-break:break-all; margin:0; color:#111827; font-size:12px;">
                     {{ $url }}
@@ -42,7 +42,7 @@
                 <hr style="border:none; border-top:1px solid #e5e7eb; margin:22px 0;">
 
                 <p style="margin:0; color:#6b7280; font-size:12px; line-height:1.6;">
-                    Jika kamu tidak meminta reset password, abaikan email ini.
+                    If you did not request a password reset, you can safely ignore this email.
                 </p>
                 </td>
             </tr>

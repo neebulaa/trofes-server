@@ -101,7 +101,16 @@ export default function Login() {
                             {processing ? 'Logging in...' : 'Login'}
                         </button>
 
-                        <button type="button" className="btn btn-google btn-full">
+                        {/* <button type="button" className="btn btn-google btn-full">
+                            <img src="/assets/icons/google.png" alt="Google" />
+                            Login with Google
+                        </button> */}
+
+                        <button
+                            type="button"
+                            className="btn btn-google btn-full"
+                            onClick={() => (window.location.href = '/auth/google/redirect')}
+                        >
                             <img src="/assets/icons/google.png" alt="Google" />
                             Login with Google
                         </button>
