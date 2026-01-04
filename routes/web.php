@@ -19,28 +19,31 @@ Route::get('/', function(){
     ]);
 })->name('home');
 
-Route::get('/recipes', function(){
-    return Inertia::render('Recipes');
-});
-
-
 Route::get('/contact-us', function(){
     return Inertia::render('ContactUs');
 });
 
 Route::middleware('auth')->group(function(){
-    // guides
-    Route::get('/guides/{guide}', [GuideController::class, 'show']);
-    Route::get('/guides', [GuideController::class, 'index']);
 
-    // profile
-    Route::get('/profile', [UserController::class, 'index']);
-    Route::put('/profile/update', [UserController::class, 'update']);
-    Route::post('/profile/update-profile-image', [UserController::class, 'updateProfileImage']);
-    Route::delete('/profile/remove-profile-image', [UserController::class, 'removeProfileImage']);
+    Route::middleware('onboarded')->group(function(){
+        // guides
+        Route::get('/guides/{guide}', [GuideController::class, 'show']);
+        Route::get('/guides', [GuideController::class, 'index']);
+    
+        // profile
+        Route::get('/profile', [UserController::class, 'index']);
+        Route::put('/profile/update', [UserController::class, 'update']);
+        Route::post('/profile/update-profile-image', [UserController::class, 'updateProfileImage']);
+        Route::delete('/profile/remove-profile-image', [UserController::class, 'removeProfileImage']);
+
+        // recipes
+        Route::get('/recipes', function(){
+            return Inertia::render('Recipes');
+        });
+    });
 
     // onboarding
-    Route::get('/onboarding', [OnboardingController::class, 'onboarding']);
+    Route::get('/onboarding', [OnboardingController::class, 'onboarding'])->name('onboarding.index');
     Route::post('/onboarding/profile-setup', [OnboardingController::class, 'setupProfile']);
     Route::post('/onboarding/dietary-preferences-setup', [OnboardingController::class, 'setupDietaryPreferences']);
     Route::post('/onboarding/allergies-setup', [OnboardingController::class, 'setupAllergies']);

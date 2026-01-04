@@ -15,6 +15,19 @@ class EnsureOnboardingCompleted
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $user = $request->user();
+
+        if (!$user) return $next($request);
+
+        if ($request->routeIs('onboarding.*')) {
+            return $next($request);
+        }
+
+        if (! $user->onboarding_completed) {
+            // return redirect('/onboarding');
+            return redirect()->route('onboarding.index');
+        }
+
         return $next($request);
     }
 }

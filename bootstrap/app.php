@@ -1,12 +1,13 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
+use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\EnsureOnboardingCompleted;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Http\Middleware\HandleInertiaRequests;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,8 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-         $middleware->web(append: [
+        $middleware->web(append: [
             HandleInertiaRequests::class,
+        ]);
+        // $middleware->append(EnsureOnboardingCompleted::class);
+        $middleware->alias([
+            'onboarded' => EnsureOnboardingCompleted::class
         ]);
         // $middleware->redirectGuestsTo('/login');
         $middleware->redirectGuestsTo(fn (Request $request) => route('login'));

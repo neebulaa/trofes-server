@@ -46,10 +46,10 @@ class OnboardingController extends Controller
 
         $user = Auth::user();
         $user->update([
-            'full_name'   => $validated['full_name'] ?? $user->full_name,
-            'phone'       => $phone ?? $user->phone,
-            'gender'      => $validated['gender'] ?? $user->gender,
-            'birth_date'  => $validated['birth_date'] ?? $user->birth_date,
+            'full_name' => $validated['full_name'] ?? $user->full_name,
+            'phone' => $phone ?? $user->phone,
+            'gender' => $validated['gender'] ?? $user->gender,
+            'birth_date' => $validated['birth_date'] ?? $user->birth_date,
         ]);
 
         return back();
