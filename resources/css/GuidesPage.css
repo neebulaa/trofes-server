@@ -21,7 +21,7 @@
 .guides-page-list {
     margin-top: 2rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, minmax(250px, 1fr));
     gap: 2rem 1rem;
 }
 
@@ -90,7 +90,14 @@
     display: none;
 }
 
+@media (max-width: 900px){
+    .guides-page-list {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+    }
+}
+
 @media (max-width: 640px) {
+
     .search-and-filters form {
         flex-direction: column;
     }
@@ -104,5 +111,11 @@
         margin-right: .5rem;
         font-size: 0.95rem;
         color: var(--neutral-700);
+    }
+}
+
+@media(max-width: 570px) {
+    .guides-page-list {
+        grid-template-columns: repeat(1, minmax(200px, 1fr));
     }
 }
