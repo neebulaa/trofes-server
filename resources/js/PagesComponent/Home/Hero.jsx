@@ -1,4 +1,6 @@
 import HeroCarausel from "../../Components/HeroCarausel"
+import { Link } from "@inertiajs/react"
+
 export default function Hero(){
     return (
         <section id="hero" className="hero">
@@ -17,7 +19,7 @@ export default function Hero(){
                 </p>
 
                 <div className="hero-cta">
-                    <a className="btn btn-fill" href="#pencarian">Coba Sekarang</a>
+                    <Link className="btn btn-fill" href="/recipes">Coba Sekarang</Link>
                 </div>
 
             </div>

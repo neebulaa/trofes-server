@@ -7,13 +7,13 @@ export default function Recipe({recipe}){
                     alt={recipe.image}
                     className="profile-liked-recipe-image"
                 />
-                {/* <span className="recipe-tags">
+                {/* <span className="recipe-card-badge">
                     <i class="fa-solid fa-crown"></i>
                     <p>
                         Premium
                     </p>
                 </span> */}
-                {/* <span className="recipe-tags">
+                {/* <span className="recipe-card-badge">
                     <i class="fa-solid fa-heart"></i>
                     <p>
                         Favs

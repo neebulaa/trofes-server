@@ -7,8 +7,10 @@ use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Rules\StrongPassword;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Password;
 
@@ -149,11 +151,31 @@ class AuthController extends Controller
     }
 
     public function resetPassword($token){
-        $user = User::where('email', request('email'))->first();
+        $email = request('email');
+        $reset = DB::table('password_reset_tokens')
+            ->where('email', $email)
+            ->first();
+
+        // token or email not found
+        if (!$reset || !Hash::check($token, $reset->token)) {
+            return redirect('/login');
+        }
+
+        // check expiration (default 60 minutes)
+        if (now()->subMinutes(config('auth.passwords.users.expire'))->gt($reset->created_at)) {
+            return redirect('/login');
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+
         return Inertia::render('ResetPassword', [
             'token' => $token,
-            'email' => request('email'),
-            'username' => $user->username
+            'email' => $email,
+            'username' => $user->username,
         ]);
     }
 

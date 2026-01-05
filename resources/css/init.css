@@ -253,6 +253,7 @@ input[type='text']:focus),
 }
 
 .green-block {
+    line-height: 1.1;
     color: var(--white);
     display: inline-block;
     background: var(--primary-600);
@@ -681,7 +682,7 @@ input[type='text']:focus),
     gap: 2rem 1rem;
 }
 
-.recipe-image {
+.recipe-card .recipe-image {
     width: 100%;
     aspect-ratio: 16 / 10;
     position: relative;
@@ -691,25 +692,47 @@ input[type='text']:focus),
     border: 1px solid var(--neutral-300);
 }
 
-.recipe-tags {
+.recipe-card-badge {
     position: absolute;
     top: .5rem;
     left: .5rem;
+    padding: .25rem .45rem;
+    border-radius: 5px;
+    font-size: .85rem;
+    font-weight: 600;
 }
 
-.recipe-image img {
+.recipe-card-badge.favs {
+}
+
+.recipe-card-badge.new {
+    background: var(--accent-info-600);
+    color: var(--white);
+}
+
+.recipe-card-badge.for-name {
+    background: var(--primary-50);
+    color: var(--primary-600);
+}
+
+.recipe-card-badge.premium {
+    background: var(--secondary-600);
+    color: var(--white);
+}
+
+.recipe-card .recipe-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.recipe-content h3 {
+.recipe-card .recipe-content h3 {
     font-size: 1rem;
     font-weight: 600;
     margin-top: .75rem;
 }
 
-.recipe-info {
+.recipe-card .recipe-info {
     margin-top: .5rem;
     display: flex;
     gap: 1rem;
@@ -717,8 +740,7 @@ input[type='text']:focus),
     color: var(--neutral-600);
 }
 
-
-.recipe-info-list {
+.recipe-card .recipe-info-list {
     display: flex;
     align-items: center;
     gap: .25rem;

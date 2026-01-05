@@ -1,2 +1,67 @@
 /* recipe container dan card ada di init.css */
 
+#recipes-page {
+    padding-block: 4rem;
+}
+
+#recipes-page .recipes-page-hero {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+#recipes-page .recipes-page-hero-left {
+    flex: 5;
+}
+
+#recipes-page .recipes-page-hero-left .recipes-page-hero-title {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 600;
+}
+
+#recipes-page .recipes-page-hero-left .recipes-page-hero-desc {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-top: 1rem;
+}
+
+#recipes-page .recipes-page-hero-right {
+    flex: 4;
+}
+
+.recipe-show {
+    width: 100%;
+    height: 300px;
+}
+
+.recipe-show-card {
+    transition: opacity 450ms ease;
+    will-change: opacity;
+    opacity: 0;
+
+    position: relative;
+}
+
+.recipe-show-card.out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.recipe-show-card.in {
+    opacity: 1;
+}
+
+.recipe-show-card img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.recipe-show-card .recipe-card-badge {
+    position: absolute;
+    top: initial;
+    left: initial;
+    bottom: 1rem;
+    right: 1rem;
+}
