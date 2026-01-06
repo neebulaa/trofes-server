@@ -1,0 +1,68 @@
+.recipe-detail-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* ---------- TITLE ---------- */
+.recipe-detail-title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+
+/* ---------- IMAGE WRAPPER ---------- */
+.recipe-detail-image {
+  width: 100%;
+  max-width: 520px;              /* ✅ limit size to avoid upscaling */
+  margin: 0 auto 1.5rem;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f4f4f4;
+}
+
+/* ---------- IMAGE ITSELF ---------- */
+.recipe-detail-image img {
+  display: block;
+  width: 100%;
+  height: auto;                  /* keep natural aspect ratio */
+  max-height: 360px;             /* ✅ prevent over-scaling vertically */
+  object-fit: contain;           /* ❗ do NOT use cover (causes blur) */
+  image-rendering: auto;         /* default smoothing */
+}
+
+/* ---------- INFO GRID ---------- */
+.recipe-detail-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+.recipe-detail-info p {
+  margin: 0;
+  color: #333;
+}
+
+/* ---------- CONTENT ---------- */
+.recipe-detail-content h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.recipe-detail-content p {
+  line-height: 1.65;
+  color: #444;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 640px) {
+  .recipe-detail-image {
+    max-width: 100%;
+  }
+
+  .recipe-detail-image img {
+    max-height: 260px;
+  }
+}

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\GuideResource;
 use App\Models\Guide;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -26,17 +25,17 @@ class GuideController extends Controller
 
         // using guide resource
         return Inertia::render('Guides', [
-            'guides' => GuideResource::collection($guides),
+            'guides' => $guides,
         ]);
     }
 
 
     public function show(Request $request, Guide $guide){
         return Inertia::render('GuideDetail', [
-            'guide' => GuideResource::make($guide),
-            'next_guide' => GuideResource::make(Guide::where('guide_id', '>', $guide->guide_id)->orderBy('guide_id')->first()),
-            'prev_guide' => GuideResource::make(Guide::where('guide_id', '<', $guide->guide_id)->orderBy('guide_id', 'desc')->first()),
-            'other_guides' => GuideResource::collection(Guide::where('guide_id', '!=', $guide->guide_id)->inRandomOrder()->limit(5)->get()),
+            'guide' => $guide,
+            'next_guide' => Guide::where('guide_id', '>', $guide->guide_id)->orderBy('guide_id')->first(),
+            'prev_guide' => Guide::where('guide_id', '<', $guide->guide_id)->orderBy('guide_id', 'desc')->first(),
+            'other_guides' => Guide::where('guide_id', '!=', $guide->guide_id)->inRandomOrder()->limit(5)->get(),
         ]);
     }
 }
