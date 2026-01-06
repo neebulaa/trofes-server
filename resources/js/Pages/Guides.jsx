@@ -5,6 +5,7 @@ import { router, useForm } from "@inertiajs/react";
 import Paginator from "../Components/Paginator";
 import Dropdown from "../Components/Dropdown";
 import GuideCard from "../Components/GuideCard";
+import NotFoundSection from "../Components/NotFoundSection";
 
 export default function Guides({ guides, filters }) {
     const { data, setData, get, errors } = useForm({
@@ -108,11 +109,16 @@ export default function Guides({ guides, filters }) {
                     </form>
                 </div>
 
-                <div className="guides-page-list">
-                    {displayGuides.map((guide) => (
-                        <GuideCard guide={guide}/>
-                    ))}
-                </div>
+                {
+                    displayGuides.length === 0 ? (
+                        <NotFoundSection message="No guides found." />
+                    ) : 
+                    <div className="guides-page-list">
+                        {displayGuides.map((guide) => (
+                            <GuideCard guide={guide}/>
+                        ))}
+                    </div>
+                }
 
                 <Paginator paginator={guides} onNavigate={(url) => router.get(url)} />
             </div>

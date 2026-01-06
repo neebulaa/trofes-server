@@ -1,12 +1,14 @@
 import Layout from "../Layouts/Layout";
 import "../../css/Recipes.css";
-import { useForm, router, Link } from "@inertiajs/react";
+import { useForm, router, Link, usePage } from "@inertiajs/react";
 import { useEffect, useRef, useState, useMemo } from "react";
 import RecipeCard from "../Components/RecipeCard";
 import Paginator from "../Components/Paginator";
 import Dropdown from "../Components/Dropdown";
+import NotFoundSection from "../Components/NotFoundSection";
 
 export default function Recipes({recipes, hero_recipes, recommended_recipes, recipe_filter_options = [], active_filter = null}) {
+    const { url } = usePage();
     const { data, setData, errors } = useForm({ search: "" });
 
     const [activeIndex, setActiveIndex] = useState(0);
@@ -17,13 +19,13 @@ export default function Recipes({recipes, hero_recipes, recommended_recipes, rec
     const FADE_MS = 450;
 
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const q = params.get("search") ?? "";
-        console.log(q);
-        if (q && !data.search) {
-            setData("search", q);
-        }
-    }, []);
+        const u = new URL(url, window.location.origin);
+        const q = u.searchParams.get("search") ?? "";
+        setData((prev) => ({
+            ...prev,
+            search: q,
+        }));
+    }, [url]);
 
     useEffect(() => {
         if (!hero_recipes?.length) return;
@@ -248,12 +250,18 @@ export default function Recipes({recipes, hero_recipes, recommended_recipes, rec
                 </div>
             </div>
 
-            <h2 className="recipes-container-title mt-3">All Recipes</h2>
-            <div className="recipes-container mt-1">
-                {displayRecipes.map((recipe) => (
-                    <RecipeCard recipe={recipe} key={recipe.recipe_id}/>
-                ))}
-            </div>
+            {
+                displayRecipes.length === 0 ?
+                    <NotFoundSection message="No recipes found." />
+                : <>
+                    <h2 className="recipes-container-title mt-3">All Recipes</h2>
+                    <div className="recipes-container mt-1">
+                        {displayRecipes.map((recipe) => (
+                            <RecipeCard recipe={recipe} key={recipe.recipe_id}/>
+                        ))}
+                    </div>
+                </>
+            }
 
             <Paginator paginator={recipes} onNavigate={(url) => router.get(url)} />
         </div>
