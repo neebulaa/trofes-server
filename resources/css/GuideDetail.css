@@ -86,7 +86,7 @@
 .guide-other-item-image {
     flex-shrink: 0;
     width: 120px;
-    height: 60px;
+    height: 70px;
     border-radius: 6px;
     overflow: hidden;
 }
@@ -120,5 +120,108 @@
 .guide-other-item-content .date {
     font-size: .8rem;
     color: var(--neutral-500);
-    font-weight: 600;
+    font-weight: 500;
+    margin-top: .15rem;
 }
+
+@media(max-width: 1020px){
+    .guide-content h1 {
+        font-size: 2.1rem;
+    }
+
+    #guide-detail .guide-detail-container {
+        gap: 3rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .guide-content {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .guide-content h1 {
+        width: 100%;
+    }
+
+    .guide-detail-container .guide-detail-image img {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 350px;
+        object-fit: contain;
+        margin: 1.5rem 0;
+        border-radius: 8px;
+        background: #f4f4f4;
+    }
+
+    .guide-other-item h3 {
+        overflow: visible;
+        text-overflow: initial;
+        white-space: initial;
+        max-width: initial;
+    }
+    
+    .guide-other-item-content p {
+        overflow: visible;
+        text-overflow: initial;
+        white-space: initial;
+        max-width: initial;
+    }
+    
+    #guide-detail .guide-detail-container {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .guide-detail-container .guide-other {
+        position: unset;
+        top: unset;
+        margin-top: 2rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .guide-content h1 {
+        font-size: 1.85rem;
+    }
+
+    .guide-other-item-image {
+        width: 100px;
+        height: 60px;
+    }
+
+    .guide-other-item h3 {
+        font-size: .95rem;
+    }
+
+    .guide-detail-navigation {
+        margin-top: 2rem;
+    }
+}
+
+@media(max-width: 400px){
+    
+    .guide-other-item h3 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 150px;
+    }
+    
+    .guide-other-item-content p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 150px;
+    }
+
+    .guide-navigators {
+        flex-direction: column;
+        gap: .5rem;
+    }
+    .guide-navigators a {
+        width: 100%;
+        text-align: center;
+    }
+}   

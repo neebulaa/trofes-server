@@ -46,7 +46,7 @@ export default function GuideDetail({guide, next_guide, prev_guide, other_guides
 
                                 <div className="guide-other-item-content">
                                     <h3>{other_guide.title}</h3>
-                                    <p>{other_guide.excerpt}</p>
+                                    <p>{other_guide.excerpt}...</p>
                                     <p className="date">{new Date(other_guide.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                                 </div>
                             </Link>
