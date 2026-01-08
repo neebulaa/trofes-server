@@ -28,7 +28,6 @@
 
 .guide-content h1 {
     margin-top: 1rem;
-    font-size: 2.5rem;
     margin-bottom: 1rem;
     font-weight: 600;
 }
@@ -131,7 +130,7 @@
 
 @media(max-width: 1020px){
     .guide-content h1 {
-        font-size: 2.1rem;
+        font-size: 1.9rem;
     }
 
     #guide-detail .guide-detail-container {

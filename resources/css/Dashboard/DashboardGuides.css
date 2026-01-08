@@ -1,6 +1,7 @@
 .crud-guide-card {
     display: flex;
     flex-direction: column;
+    padding-block: 2rem;
 }
 
 .crud-guide-card .guide-detail-image img {
@@ -16,8 +17,8 @@
 
 .guide-title {
     margin-top: 1rem;
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.9rem;
+    font-weight: 600;
 }
 
 .crud-guide-card a {

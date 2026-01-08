@@ -19,6 +19,9 @@ export default function Guides({ guide }) {
 
             <div className="crud-show">
                 <div className="crud-card crud-guide-card">
+                    <div className="guide-detail-date">
+                        <i className="fa-regular fa-calendar"></i> {new Date(guide.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </div>
                     <h2 className="guide-title">{guide.title}</h2>
                     <div className="guide-detail-image">
                         <img
