@@ -1,6 +1,7 @@
 export default function Icon ({ name }) {
     const map = {
         home: <i className="fa-regular fa-house" aria-hidden="true" />,
+        guides: <i className="fa-solid fa-book-open" aria-hidden="true" />,
         users: <i className="fa-regular fa-users" aria-hidden="true" />,
         report: <i className="fa-regular fa-chart-bar" aria-hidden="true" />,
         settings: <i className="fa-regular fa-gear" aria-hidden="true" />,

@@ -82,73 +82,91 @@ export default function NavbarAuth({ user }) {
 
     return (
         <header id="auth-navbar">
-        <nav className={`container nav ${open ? "nav-open" : ""}`}>
-            <div className="logo">
-                <Link href="/"> 
-                    <img src="/assets/logo/logo-transparent.png" alt="Trofes Logo" />
-                </Link>
-            </div>
-
-            <div className="nav-search-toggle" onClick={openSearchBar}>
-            <i className="fa-solid fa-magnifying-glass"></i>
-            </div>
-
-            {renderSearch && (
-            <form
-                className={`nav-search-container${openSearch ? " nav-search-open" : ""}`}
-                onTransitionEnd={(e) => {
-                if (e.target === e.currentTarget && !openSearch) {
-                    setRenderSearch(false);
-                }
-                }}
-                onSubmit={handleSearchSubmit}
-            >
-                <div className="nav-search">
-                <Dropdown
-                    options={categoryOptions}
-                    value={category}
-                    onChange={setCategory}
-                />
-
-                <input
-                    type="text"
-                    placeholder="What are you looking for?"
-                    value={data.search}
-                    onChange={(e) => setData("search", e.target.value)}
-                />
-
-                <button type="submit" className="nav-search-icon-btn">
-                    <i className="fa-solid fa-magnifying-glass"></i>
-                </button>
+            <nav className={`container nav ${open ? "nav-open" : ""}`}>
+                <div className="logo">
+                    <Link href="/">
+                        <img
+                            src="/assets/logo/logo-transparent.png"
+                            alt="Trofes Logo"
+                        />
+                    </Link>
                 </div>
 
-                {errors.search && <small className="error-text">{errors.search}</small>}
-            </form>
-            )}
+                <div className="nav-search-toggle" onClick={openSearchBar}>
+                    <i className="fa-solid fa-magnifying-glass"></i>
+                </div>
 
-            <div className="nav-content">
-                <NavLinks url={url} handleNavigate={handleNavigate} />
-            </div>
+                {renderSearch && (
+                    <form
+                        className={`nav-search-container${
+                            openSearch ? " nav-search-open" : ""
+                        }`}
+                        onTransitionEnd={(e) => {
+                            if (e.target === e.currentTarget && !openSearch) {
+                                setRenderSearch(false);
+                            }
+                        }}
+                        onSubmit={handleSearchSubmit}
+                    >
+                        <div className="nav-search">
+                            <Dropdown
+                                options={categoryOptions}
+                                value={category}
+                                onChange={setCategory}
+                            />
 
-            <div className="nav-content-auth">
-                <Link
-                    href="/custom-search-recipes"
-                    type="button"
-                    className="custom-search-btn"
+                            <input
+                                type="text"
+                                placeholder="What are you looking for?"
+                                value={data.search}
+                                onChange={(e) =>
+                                    setData("search", e.target.value)
+                                }
+                            />
+
+                            <button
+                                type="submit"
+                                className="nav-search-icon-btn"
+                            >
+                                <i className="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                        </div>
+
+                        {errors.search && (
+                            <small className="error-text">
+                                {errors.search}
+                            </small>
+                        )}
+                    </form>
+                )}
+
+                <div className="nav-content">
+                    <NavLinks url={url} handleNavigate={handleNavigate} />
+                </div>
+
+                <div className="nav-content-auth">
+                    <Link
+                        href="/custom-search-recipes"
+                        type="button"
+                        className="custom-search-btn"
+                    >
+                        <i className="fa-brands fa-searchengin"></i>
+                        <p>Custom Search</p>
+                    </Link>
+
+                    <ProfileDropdown user={user} />
+                </div>
+
+                <button
+                    className="hamburger"
+                    aria-label="menu"
+                    onClick={openNavbar}
                 >
-                    <i className="fa-brands fa-searchengin"></i>
-                    <p>Custom Search</p>
-                </Link>
-
-                <ProfileDropdown user={user} />
-            </div>
-
-            <button className="hamburger" aria-label="menu" onClick={openNavbar}>
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </nav>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
         </header>
     );
 }

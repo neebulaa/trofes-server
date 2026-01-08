@@ -21,7 +21,6 @@ export default function Paginator({
     maxVisible = 5,
 }) {
     if (!paginator) return null;
-    console.log(paginator);
 
     // resource/non-resource normalize into one shape
     const isResourceShape = !!paginator.meta;
@@ -34,9 +33,7 @@ export default function Paginator({
         ? paginator.meta.last_page
         : paginator.last_page;
 
-    const linksArray = isResourceShape
-        ? paginator.meta.links
-        : paginator.links;
+    const linksArray = isResourceShape ? paginator.meta.links : paginator.links;
 
     const prevUrl = isResourceShape
         ? paginator.links?.prev
@@ -88,29 +85,30 @@ export default function Paginator({
                 onClick={() => navigate(prevUrl)}
                 disabled={!prevUrl}
             >
-                &lt;
-                Prev
+                &lt; Prev
             </button>
 
             <div className="paginator-pages">
                 {showFirst && firstLink?.url && (
-                <>
-                    <button
-                        type="button"
-                        className="paginator-page"
-                        onClick={() => navigate(firstLink.url)}
-                    >
-                        1
-                    </button>
-                    <span className="paginator-ellipsis">…</span>
-                </>
+                    <>
+                        <button
+                            type="button"
+                            className="paginator-page"
+                            onClick={() => navigate(firstLink.url)}
+                        >
+                            1
+                        </button>
+                        <span className="paginator-ellipsis">…</span>
+                    </>
                 )}
 
                 {visiblePages.map((link, idx) => (
                     <button
                         key={`${link.label}-${idx}`}
                         type="button"
-                        className={`paginator-page ${link.active ? "is-active" : ""}`}
+                        className={`paginator-page ${
+                            link.active ? "is-active" : ""
+                        }`}
                         onClick={() => navigate(link.url)}
                         disabled={!link.url || link.active}
                         aria-current={link.active ? "page" : undefined}
@@ -139,8 +137,7 @@ export default function Paginator({
                 onClick={() => navigate(nextUrl)}
                 disabled={!nextUrl}
             >
-                Next
-                &gt;
+                Next &gt;
             </button>
         </nav>
     );

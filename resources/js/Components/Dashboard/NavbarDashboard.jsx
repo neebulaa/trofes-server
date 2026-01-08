@@ -1,8 +1,8 @@
 import { useState } from "react";
 import ProfileDropdown from "../ProfileDropdown";
-import DashboardIcon from "../Dashboard/DashboardIcon";
+import DashboardIcon from "./DashboardIcon";
 
-export default function Navbar({ title, onOpenSidebarMobile, user }) {
+export default function NavbarDashboard({ title, onOpenSidebarMobile, user }) {
     const [profileOpen, setProfileOpen] = useState(false);
 
     return (

@@ -9,9 +9,10 @@ use App\Http\Controllers\OnboardingController;
 use App\Models\Guide;
 use App\Models\Recipe;
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\DashboardAllergyController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\DashboardController;
-
+use App\Http\Controllers\DashboardGuideController;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -58,7 +59,34 @@ Route::middleware('auth')->group(function(){
     Route::post('/sign-out', [AuthController::class, 'signOut']);
 
     // dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('is_admin')->name('dashboard.index');
+    Route::middleware('is_admin')->group(function(){
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
+        // dashboard guides
+        Route::get('/dashboard/guides', [DashboardGuideController::class, 'index']);
+        Route::get('/dashboard/guides/create', [DashboardGuideController::class, 'create']);
+        Route::post('/dashboard/guides', [DashboardGuideController::class, 'store']);
+        Route::get('/dashboard/guides/{guide}', [DashboardGuideController::class, 'show']);
+        Route::get('/dashboard/guides/{guide}/edit', [DashboardGuideController::class, 'edit']);
+        Route::put('/dashboard/guides/{guide}', [DashboardGuideController::class, 'update']);
+        Route::delete('/dashboard/guides/{guide}', [DashboardGuideController::class, 'destroy']);
+
+        // dashboard allergies
+        // Route::get("/dashboard/allergies", [DashboardAllergyController::class, 'index']);
+        // Route::get("/dashboard/allergies/create", [DashboardAllergyController::class, 'create']);
+        // Route::post("/dashboard/allergies", [DashboardAllergyController::class, 'store']);
+        // Route::get("/dashboard/allergies/{allergy}/edit", [DashboardAllergyController::class, 'edit']);
+        // Route::put("/dashboard/allergies/{allergy}", [DashboardAllergyController::class, 'update']);
+        // Route::delete("/dashboard/allergies/{allergy}", [DashboardAllergyController::class, 'destroy']);
+
+        // dashboard dietary preferences
+        // Route::get("/dashboard/allergies", [DashboardAllergyController::class, 'index']);
+        // Route::get("/dashboard/allergies/create", [DashboardAllergyController::class, 'create']);
+        // Route::post("/dashboard/allergies", [DashboardAllergyController::class, 'store']);
+        // Route::get("/dashboard/allergies/{allergy}/edit", [DashboardAllergyController::class, 'edit']);
+        // Route::put("/dashboard/allergies/{allergy}", [DashboardAllergyController::class, 'update']);
+        // Route::delete("/dashboard/allergies/{allergy}", [DashboardAllergyController::class, 'destroy']);
+    });
 });
 
 Route::middleware('guest')->group(function(){

@@ -1,65 +1,72 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from "react";
 
 export default function CustomDatalist({
     label,
     options,
     value = [],
     onChange,
-    placeholder = 'Search...',
-    className
+    placeholder = "Search...",
+    className,
 }) {
-    const [open, setOpen] = useState(false)
-    const [query, setQuery] = useState('')
-    const ref = useRef(null)
+    const [open, setOpen] = useState(false);
+    const [query, setQuery] = useState("");
+    const ref = useRef(null);
 
     useEffect(() => {
         function handleClickOutside(e) {
             if (ref.current && !ref.current.contains(e.target)) {
-                setOpen(false)
+                setOpen(false);
             }
         }
 
-        document.addEventListener('mousedown', handleClickOutside)
-        return () => document.removeEventListener('mousedown', handleClickOutside)
-    }, [])
+        document.addEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     // Filter options & remove already selected
-    const filteredOptions = options.filter(opt =>
-        opt.label.toLowerCase().includes(query.toLowerCase()) &&
-        !value.some(v => v.value === opt.value)
-    )
+    const filteredOptions = options.filter(
+        (opt) =>
+            opt.label.toLowerCase().includes(query.toLowerCase()) &&
+            !value.some((v) => v.value === opt.value)
+    );
 
     function handleSelect(option) {
-        onChange([...value, option])
-        setQuery('')
-        setOpen(false)
+        onChange([...value, option]);
+        setQuery("");
+        setOpen(false);
     }
 
     function handleRemove(optionValue) {
-        onChange(value.filter(v => v.value !== optionValue))
+        onChange(value.filter((v) => v.value !== optionValue));
     }
 
     function handleKeyDown(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault()
+        if (e.key === "Enter") {
+            e.preventDefault();
 
-            if (!query.trim()) return
-            if (filteredOptions.length === 0) return
+            if (!query.trim()) return;
+            if (filteredOptions.length === 0) return;
 
             // select first match
-            handleSelect(filteredOptions[0])
+            handleSelect(filteredOptions[0]);
         }
     }
 
-    function handleRemoveAll(){
-        const confirmation = confirm("Are you sure you want to remove all selected items?");
+    function handleRemoveAll() {
+        const confirmation = confirm(
+            "Are you sure you want to remove all selected items?"
+        );
         if (confirmation) {
-            onChange([])
+            onChange([]);
         }
     }
 
     return (
-        <div className={`input-group datalist-container ${className || ''}`} ref={ref}>
+        <div
+            className={`input-group datalist-container ${className || ""}`}
+            ref={ref}
+        >
             {label && <label>{label}</label>}
 
             <div className="datalist-input">
@@ -69,8 +76,8 @@ export default function CustomDatalist({
                     placeholder={placeholder}
                     onFocus={() => setOpen(true)}
                     onChange={(e) => {
-                        setQuery(e.target.value)
-                        setOpen(true)
+                        setQuery(e.target.value);
+                        setOpen(true);
                     }}
                     onKeyDown={handleKeyDown}
                 />
@@ -78,7 +85,7 @@ export default function CustomDatalist({
                 {/* Selected items */}
                 {value.length > 0 && (
                     <div className="list-items">
-                        {value.map(item => (
+                        {value.map((item) => (
                             <span key={item.value} className="list-item">
                                 {item.label}
                                 <button
@@ -91,19 +98,22 @@ export default function CustomDatalist({
                         ))}
                     </div>
                 )}
-                {
-                    value.length > 0 &&
-                    <p className="remove-all-btn mt-1" onClick={handleRemoveAll}>Remove All</p>
-                }
+                {value.length > 0 && (
+                    <p
+                        className="remove-all-btn mt-1"
+                        onClick={handleRemoveAll}
+                    >
+                        Remove All
+                    </p>
+                )}
             </div>
-
 
             {open && (
                 <div className="datalist-dropdown">
                     {filteredOptions.length === 0 ? (
                         <div className="datalist-empty">No results</div>
                     ) : (
-                        filteredOptions.map(option => (
+                        filteredOptions.map((option) => (
                             <div
                                 key={option.value}
                                 className="datalist-item"
@@ -116,5 +126,5 @@ export default function CustomDatalist({
                 </div>
             )}
         </div>
-    )
+    );
 }

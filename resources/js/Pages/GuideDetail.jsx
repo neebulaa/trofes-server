@@ -16,7 +16,9 @@ export default function GuideDetail({guide, next_guide, prev_guide, other_guides
                         <img src={guide.public_image} alt={guide.title} />
                     </div>
 
-                    <p className="guide-detail-content">{guide.content}</p>
+                    <p className="guide-detail-content"
+                        dangerouslySetInnerHTML={{ __html: guide.content }}
+                    />
 
                     <div className="guide-detail-navigation">
                         <h2>Selesai. Ayo lanjut <span className="green-block">Belajar!</span></h2>
@@ -35,6 +37,7 @@ export default function GuideDetail({guide, next_guide, prev_guide, other_guides
                         </div>
                     </div>
                 </div>
+                
                 <div className="guide-other">
                     <h2 className="guide-other-title">Panduan Lainnya</h2>
                     <div className="guide-other-list">

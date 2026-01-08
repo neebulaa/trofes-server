@@ -382,12 +382,6 @@
     align-items: flex-end;
 }
 
-.guides-grid{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(calc(280px * var(--ui-scale)), 1fr));
-    gap: calc(1.5rem * var(--ui-scale));
-}
-
 .guide-img{
     height: calc(206px * var(--ui-scale));
     border-radius: calc(8px * var(--ui-scale));

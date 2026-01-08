@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import { usePage } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import DashboardIcon from "../Dashboard/DashboardIcon";
 import NavLinkItem from "../Dashboard/NavLinkItem";
 import CollapsibleGroup from "../Dashboard/CollapsibleGroup";
 
 function isActive(currentUrl, href) {
     if (!href) return false;
-    return currentUrl === href || (href !== "/" && currentUrl.startsWith(href));
+    return currentUrl === href || (href !== "/dashboard" && currentUrl.startsWith(href));
 }
 
 export default function Sidebar({ collapsed, mobileOpen, onToggleCollapsed, onCloseMobile }) {
@@ -14,7 +14,8 @@ export default function Sidebar({ collapsed, mobileOpen, onToggleCollapsed, onCl
 
     const mainNavItems = useMemo(() => [
         { type: "link", label: "Home", href: "/dashboard", icon: "home" },
-        { type: "link", label: "Reports", href: "/dashboard/reports", icon: "report" },
+        { type: "link", label: "Guides", href: "/dashboard/guides", icon: "guides" },
+        { type: "link", label: "Allergies", href: "/dashboard/allergies", icon: "allergies" },
     ], []);
 
     return (
@@ -27,16 +28,18 @@ export default function Sidebar({ collapsed, mobileOpen, onToggleCollapsed, onCl
             aria-label="Dashboard sidebar"
         >
         <div className="dash-sidebarTop">
-            <div className="dash-brand">
-                <div className="dash-brand-logo">
-                    <img src="/assets/logo/logo-transparent.png" alt="Trofes Logo Dashboard" />
-                </div>
+            <Link href="/">
+                <div className="dash-brand">
+                    <div className="dash-brand-logo">
+                            <img src="/assets/logo/logo-transparent.png" alt="Trofes Logo Dashboard" />
+                    </div>
 
-                <div className="dash-brand-text">
-                    <h3 className="">Trofes</h3>
-                    <span className="text-muted">Dashboard</span>
+                    <div className="dash-brand-text">
+                        <h3 className="">Trofes</h3>
+                        <span className="text-muted">Dashboard</span>
+                    </div>
                 </div>
-            </div>
+            </Link>
 
             <div className="dash-sideActions">
                 <button
@@ -46,7 +49,7 @@ export default function Sidebar({ collapsed, mobileOpen, onToggleCollapsed, onCl
                     title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
                     aria-label="Toggle collapse sidebar"
                 >
-                    <DashboardIcon name="chevronLeft" />
+                    <DashboardIcon name="menu" />
                 </button>
 
                 <button

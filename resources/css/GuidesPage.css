@@ -18,47 +18,6 @@
     margin: 0 auto 3rem auto;
 }
 
-.guides-page-list {
-    margin-top: 2rem;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(250px, 1fr));
-    gap: 2rem 1rem;
-}
-
-.guide-card-image {
-    border: 1px solid var(--line);
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    max-height: 200px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border-radius: 8px;
-}
-
-.guide-card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.guide-card-title {
-    margin-top: .85rem;
-    font-size: 1.125rem;
-}
-
-.guide-card-excerpt {
-    margin-top: .25rem;
-    font-size: 1rem;
-    color: var(--muted);
-}
-
-.guide-card-date {
-    font-size: .85rem;
-    color: var(--neutral-500);
-    margin-top: .5rem;
-    font-weight: 500;
-}
-
 /* search bar (main design in init.css) */
 .search-and-filters form {
     display: flex;
@@ -89,12 +48,6 @@
     display: none;
 }
 
-@media (max-width: 900px){
-    .guides-page-list {
-        grid-template-columns: repeat(2, minmax(220px, 1fr));
-    }
-}
-
 @media (max-width: 640px) {
 
     .search-and-filters form {
@@ -110,11 +63,5 @@
         margin-right: .5rem;
         font-size: 0.95rem;
         color: var(--neutral-700);
-    }
-}
-
-@media(max-width: 570px) {
-    .guides-page-list {
-        grid-template-columns: repeat(1, minmax(200px, 1fr));
     }
 }

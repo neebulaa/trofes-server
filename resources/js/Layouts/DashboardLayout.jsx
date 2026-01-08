@@ -1,15 +1,17 @@
 import { useMemo, useState } from "react";
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage } from "@inertiajs/react";
 import Sidebar from "../Components/Dashboard/Sidebar";
-import Navbar from "../Components/Dashboard/Navbar";
+import NavbarDashboard from "../Components/Dashboard/NavbarDashboard";
+import "../../css/init.css";
 import "../../css/Dashboard/Dashboard.css";
-
 
 export default function DashboardLayout({ children, title = "Dashboard" }) {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [sidebarMobileOpen, setSidebarMobileOpen] = useState(false);
     const { url, props } = usePage();
-    const { auth: { user } } = props;
+    const {
+        auth: { user },
+    } = props;
 
     const layoutClass = useMemo(() => {
         return [
@@ -17,8 +19,8 @@ export default function DashboardLayout({ children, title = "Dashboard" }) {
             sidebarCollapsed ? "dash--sidebar-collapsed" : "",
             sidebarMobileOpen ? "dash--mobile-open" : "",
         ]
-        .filter(Boolean)
-        .join(" ");
+            .filter(Boolean)
+            .join(" ");
     }, [sidebarCollapsed, sidebarMobileOpen]);
 
     return (
@@ -36,7 +38,10 @@ export default function DashboardLayout({ children, title = "Dashboard" }) {
                 />
                 <meta name="author" content="Trofes" />
                 <meta name="robots" content="index, follow" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
 
                 <link rel="icon" href="/assets/logo/logo-transparent.png" />
                 <link
@@ -64,15 +69,13 @@ export default function DashboardLayout({ children, title = "Dashboard" }) {
                 />
 
                 <div className="dash-main">
-                    <Navbar
+                    <NavbarDashboard
                         user={user}
                         title={title}
                         onOpenSidebarMobile={() => setSidebarMobileOpen(true)}
                     />
 
-                    <main className="dash-content">
-                        {children}
-                    </main>
+                    <main className="dash-content">{children}</main>
                 </div>
             </div>
         </>

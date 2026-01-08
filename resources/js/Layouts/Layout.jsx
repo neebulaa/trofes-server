@@ -1,18 +1,20 @@
-import '../../css/Navbar.css'
-import '../../css/Footer.css'
-import NavbarGuest from '../Components/NavbarGuest'
-import NavbarAuth from '../Components/NavbarAuth'
-import Footer from '../Components/Footer'
+import "../../css/Navbar.css";
+import "../../css/Footer.css";
+import NavbarGuest from "../Components/NavbarGuest";
+import NavbarAuth from "../Components/NavbarAuth";
+import Footer from "../Components/Footer";
 
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage } from "@inertiajs/react";
 
 export default function Layout({ children }) {
     const { url, props } = usePage();
-    const { auth: { user } } = props;
+    const {
+        auth: { user },
+    } = props;
 
     const hideLayout =
-    url.startsWith('/reset-password') ||
-    ['/login', '/sign-up', '/onboarding', '/forgot-password'].includes(url);
+        url.startsWith("/reset-password") ||
+        ["/login", "/sign-up", "/onboarding", "/forgot-password"].includes(url);
 
     return (
         <>
@@ -29,7 +31,10 @@ export default function Layout({ children }) {
                 />
                 <meta name="author" content="Trofes" />
                 <meta name="robots" content="index, follow" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
 
                 <link rel="icon" href="/assets/logo/logo-transparent.png" />
                 <link
@@ -41,7 +46,8 @@ export default function Layout({ children }) {
                 />
             </Head>
 
-            {!hideLayout && (user ? <NavbarAuth user={user}/> : <NavbarGuest />)}
+            {!hideLayout &&
+                (user ? <NavbarAuth user={user} /> : <NavbarGuest />)}
 
             {children}
 
