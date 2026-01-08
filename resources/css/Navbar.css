@@ -234,6 +234,14 @@ header {
         align-items: center;
         font-size: 1.5rem;
     }
+
+    .nav-action {
+        margin: auto 0 2rem;
+        border-top: 1px solid var(--line);
+        width: 100%;
+        justify-content: center;
+        padding-top: 2rem;
+    }
     
     .hamburger{
         z-index: 1200;
@@ -334,14 +342,6 @@ header {
         margin-top: 4rem;
         align-items: center;
         font-size: 1.5rem;
-    }
-    
-    .nav-action {
-        margin: auto 0 2rem;
-        border-top: 1px solid var(--line);
-        width: 100%;
-        justify-content: center;
-        padding-top: 2rem;
     }
     
     .hamburger{
