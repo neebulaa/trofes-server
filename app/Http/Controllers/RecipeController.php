@@ -9,9 +9,11 @@ use App\Models\Ingredient;
 use App\Models\LikeRecipe;
 use Illuminate\Http\Request;
 use App\Models\DietaryPreference;
-
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
@@ -75,6 +77,49 @@ class RecipeController extends Controller
         return $pillOptions;
     }
 
+    private function getAIRecommendation(array $likedRecipeIds, int $limit = 4){
+        if (empty($likedRecipeIds)) {
+            return Recipe::inRandomOrder()->limit($limit)->get();
+        }
+
+        try {
+            $response = Http::withoutVerifying()->timeout(10)->post('https://arnight-trofes-api.hf.space/recommend', [
+                'liked_ids' => $likedRecipeIds,
+                'top_k' => $limit,
+                'is_start_from_zero' => false 
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                
+                $recommendedIds = $data['recommended_ids'] ?? [];
+
+                if (empty($recommendedIds)) {
+                    return Recipe::inRandomOrder()->limit($limit)->get();
+                }
+
+                $idsString = implode(',', $recommendedIds);
+                $recommended = Recipe::whereIn('recipe_id', $recommendedIds)
+                    ->orderByRaw("FIELD(recipe_id, $idsString)")
+                    ->get();
+                // dd($recommended);
+                return $recommended;
+            } else {
+                // Log error kalau mau debugging
+                // \Log::error('API Error: ' . $response->body());
+                // dd("failed");
+            }
+
+        } catch (\Exception $e) {
+            // dd("haya failed");
+            // Kalau koneksi internet mati atau API down, jangan biarkan web crash
+            // Log::error('Connection Error: ' . $e->getMessage());
+            // dd($e->getMessage());
+        }
+
+        return Recipe::inRandomOrder()->limit($limit)->get();
+    }
+
     public function index(Request $request)
     {
         $search = $request->query('search');
@@ -131,11 +176,15 @@ class RecipeController extends Controller
         }
 
         $pillOptions = $this->getFilterPillsFromSession();
+        $userLikedIds = [];
+        if(Auth::check()){
+            $userLikedIds = \App\Models\LikeRecipe::where('user_id', Auth::id())->pluck('recipe_id')->toArray();
+        }
 
         return Inertia::render('Recipes', [
             'recipes' => $recipes,
-            'hero_recipes' => Recipe::inRandomOrder()->limit(5)->get(),
-            'recommended_recipes' => Recipe::inRandomOrder()->limit(4)->get(),
+            'hero_recipes' => $this->getAIRecommendation($userLikedIds, 5),
+            'recommended_recipes' => $this->getAIRecommendation($userLikedIds, 4),
             'recipe_filter_options' => $pillOptions,
             'active_filter' => [
                 'type' => $filterType,
