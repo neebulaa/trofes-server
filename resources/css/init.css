@@ -986,7 +986,8 @@ select:focus,
     align-items: center;
     gap: 0.15rem;
     box-shadow: 0 0px 5px rgba(0, 0, 0, 0.15);
-    max-width: max-content;
+    width: max-content;
+    max-width: 180px;
 }
 
 .recipe-card-badge .badge-text {

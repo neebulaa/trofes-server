@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {Link} from '@inertiajs/react'
+import { Link } from "@inertiajs/react";
 const cardsData = [
     {
         id: 1,
