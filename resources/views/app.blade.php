@@ -4,7 +4,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}"></meta>
         <style>
-            .loading-screen {
+            #loading-screen {
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -18,11 +18,11 @@
             }
 
             .loader {
-                width: 35px;
+                width: 35px;    
                 height: 80px;
                 position: relative;
             }
-            
+
             .loader:after {
                 content: "";
                 position: absolute;
@@ -83,7 +83,7 @@
         @inertiaHead
     </head>
     <body>
-        <div class="loading-screen">
+        <div id="loading-screen">
             <div class="loader"></div>
         </div>
 

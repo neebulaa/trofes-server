@@ -92,9 +92,9 @@
     --w-med: 332px;
     --w-small: 295px;
 
-    --h-big: 438px;
-    --h-med: 394px;
-    --h-small: 350px;
+    --h-big: 238px;
+    --h-med: 194px;
+    --h-small: 150px;
 
     --gap: 1.5rem;
 
@@ -112,9 +112,9 @@
 
 .food-card {
     position: absolute;
-    border-radius: var(--radius);
+    border-radius: 8px;
     overflow: hidden;
-    background: #000;
+    border: 1px solid var(--neutral-400);
 
     transition:
         transform 1s ease,

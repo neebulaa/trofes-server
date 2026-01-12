@@ -35,7 +35,7 @@
 }
 
 .recipe-show-card {
-    border: 1px solid var(--line);
+    border: 1px solid var(--neutral-400);
     transition: opacity 450ms ease;
     border-radius: 1rem;
     overflow: hidden;

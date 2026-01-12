@@ -11,9 +11,16 @@ createInertiaApp({
     },
     setup({ el, App, props }) {
         createRoot(el).render(<App {...props} />);
-        const splash = document.getElementById("boot-splash");
-        // if (splash) {
-        //     splash.remove();
-        // }
+        const splash = document.getElementById("loading-screen");
+        if (splash) {
+            splash.style.transition = "opacity 200ms ease";
+            setTimeout(() => {
+                splash.style.opacity = "0";
+                setTimeout(() => {
+                    splash.remove()
+                }, 200)
+            }, 2000);
+            // splash.remove();
+        }
     },
 });
