@@ -184,7 +184,7 @@ class RecipeController extends Controller
         return Inertia::render('Recipes', [
             'recipes' => $recipes,
             'hero_recipes' => $this->getAIRecommendation($userLikedIds, 5),
-            'recommended_recipes' => $this->getAIRecommendation($userLikedIds, 4),
+            'recommended_recipes' => $this->getAIRecommendation($userLikedIds, 12),
             'recipe_filter_options' => $pillOptions,
             'active_filter' => [
                 'type' => $filterType,
@@ -194,6 +194,8 @@ class RecipeController extends Controller
     }
 
     public function show(Recipe $recipe){
+        // load dietary preferences and allergies relationships
+        $recipe->load(['dietaryPreferences', 'allergies']);
         return Inertia::render('RecipeDetail', [
             'recipe' => $recipe->loadCount('likes'),
             'user' => Auth::user(),

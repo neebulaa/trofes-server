@@ -20,7 +20,6 @@ export default function Recipe({ recipe }) {
 
         const nextLiked = !liked;
 
-        // ✅ optimistic UI
         setLiked(nextLiked);
         setLikesCount((c) => c + (nextLiked ? 1 : -1));
         setBusy(true);
@@ -36,12 +35,10 @@ export default function Recipe({ recipe }) {
             });
 
             if (res.status === 401) {
-                // not logged in -> rollback
                 throw new Error("Unauthenticated");
             }
 
             if (!res.ok) {
-                // rollback for any server error
                 throw new Error("Request failed");
             }
 
@@ -49,7 +46,6 @@ export default function Recipe({ recipe }) {
             setLiked(!!json.is_liked);
             setLikesCount(json.likes_count ?? likesCount);
         } catch (err) {
-            // ✅ rollback
             setLiked(!nextLiked);
             setLikesCount((c) => c + (nextLiked ? -1 : 1));
             console.error(err);

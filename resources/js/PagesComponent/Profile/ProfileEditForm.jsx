@@ -3,6 +3,7 @@ import { useState } from "react";
 import CustomDatalist from "../../Components/CustomDatalist";
 import EditProfileDropdown from "./EditProfileDropdown";
 import UploadImageModal from "./UploadImageModal";
+import CameraCaptureModal from "./CameraCaptureModal";
 
 export default function ProfileEditForm({
     user,
@@ -61,17 +62,28 @@ export default function ProfileEditForm({
         );
     }
 
-    const [imgSrc, setImgSrc] = useState(user.profile_image || null);
+    const [imgSrc, setImgSrc] = useState(user.public_profile_image || null);
     const [rawImage, setRawImage] = useState(null);
     const [openModal, setOpenModal] = useState(false);
+    const [showCamera, setShowCamera] = useState(false);
 
-    function handleImageSelected(file) {
+    function handleDesktopCamera() {
+        setShowCamera(true);
+    }
+
+    function handleCapturedFile(file) {
+        handleImageSelected(file);
+        setShowCamera(false);
+    }
+
+    function handleCameraCapture(file) {
         setRawImage(file);
         setOpenModal(true);
     }
 
-    function handleImageSaved(previewUrl) {
-        setImgSrc(previewUrl);
+    function handleImageSelected(file) {
+        setRawImage(file);
+        setOpenModal(true);
     }
 
     function handleRemoveImage() {
@@ -107,13 +119,21 @@ export default function ProfileEditForm({
                     currentImage={imgSrc}
                     onUpload={handleImageSelected}
                     onRemove={handleRemoveImage}
+                    onTakePhotoDesktop={handleDesktopCamera}
                 />
 
                 {openModal && (
                     <UploadImageModal
                         file={rawImage}
-                        onSaved={handleImageSaved}
+                        onSaved={handleCapturedFile}
                         onClose={() => setOpenModal(false)}
+                    />
+                )}
+
+                {showCamera && (
+                    <CameraCaptureModal
+                        onCapture={handleCameraCapture}
+                        onClose={() => setShowCamera(false)}
                     />
                 )}
             </div>
