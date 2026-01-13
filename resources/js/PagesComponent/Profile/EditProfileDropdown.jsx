@@ -81,7 +81,7 @@ export default function EditProfileDropdown({
                 ref={cameraInputRef}
                 type="file"
                 accept="image/*"
-                capture="user" // use "environment" for back camera
+                capture="environment" // use "environment" for back camera
                 hidden
                 onChange={handleFileChange}
             />

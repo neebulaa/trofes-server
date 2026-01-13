@@ -7,7 +7,7 @@ export default function Hero({recipes}) {
             <div className="hero-inner container">
                 <div className="hero-badge">
                     <img src="/assets/graphics/fireworks.png" alt="fireworks-graphics" />
-                    <p>Selamat datang di Trofes</p>
+                    <p>Solusi hidangan, untuk tiap kebutuhan.</p>
                 </div>
 
                 <h1 className="hero-title">

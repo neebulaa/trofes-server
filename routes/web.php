@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GuideController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\YoutubeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\Api\LikeRecipeController;
@@ -95,6 +96,9 @@ Route::middleware('auth')->group(function(){
         Route::put("/dashboard/dietary-preferences/{dietary_preference}", [DashboardDietaryPreferenceController::class, 'update']);
         Route::delete("/dashboard/dietary-preferences/{dietary_preference}", [DashboardDietaryPreferenceController::class, 'destroy']);
     });
+
+    // youtube search
+    Route::get('/youtube/search', [YoutubeController::class, 'search']);
 });
 
 Route::middleware('guest')->group(function(){

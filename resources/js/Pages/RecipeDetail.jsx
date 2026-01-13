@@ -1,9 +1,58 @@
 import Layout from "../Layouts/Layout";
 import "../../css/RecipeDetail.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function RecipeDetail({ recipe, user }) {
     const [liked, setLiked] = useState(true);
+    const [yt, setYt] = useState({
+        loading: true,
+        embedUrl: null,
+        error: null,
+    });
+
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadYoutube() {
+            try {
+                setYt({ loading: true, embedUrl: null, error: null });
+
+                // You can tweak the query to improve results
+                const query = `how to make ${recipe.title} recipe`;
+
+                const res = await fetch(
+                    `/youtube/search?q=${encodeURIComponent(query)}`
+                );
+                const data = await res.json();
+
+                if (cancelled) return;
+
+                if (!res.ok) {
+                    setYt({
+                        loading: false,
+                        embedUrl: null,
+                        error: data?.error || "Failed to load video",
+                    });
+                    return;
+                }
+
+                setYt({ loading: false, embedUrl: data.embedUrl, error: null });
+            } catch (e) {
+                if (!cancelled)
+                    setYt({
+                        loading: false,
+                        embedUrl: null,
+                        error: "Failed to load video",
+                    });
+            }
+        }
+
+        loadYoutube();
+        return () => {
+            cancelled = true;
+        };
+    }, [recipe.title]);
+
     return (
         <div className="recipe-detail-page container">
             <div className="recipe-detail-header">
@@ -68,7 +117,7 @@ export default function RecipeDetail({ recipe, user }) {
                         </div>
                         <div className="recipe-detail-info">
                             <div className="recipe-detail-info-icon">
-                                <i class="fa-regular fa-clock"></i>
+                                <i className="fa-regular fa-clock"></i>
                             </div>
                             <div className="recipe-detail-info-text">
                                 <p className="recipe-detail-info-label">
@@ -102,7 +151,7 @@ export default function RecipeDetail({ recipe, user }) {
                 <div className="recipe-detail-nutrient-cards">
                     <div className="recipe-detail-nutrient-card">
                         <div className="recipe-detail-nutrient-icon">
-                            <i class="fa-solid fa-fire-flame-curved"></i>
+                            <i className="fa-solid fa-fire-flame-curved"></i>
                         </div>
                         <h4>Calories</h4>
                         <p>{recipe.calories} kcal</p>
@@ -123,7 +172,7 @@ export default function RecipeDetail({ recipe, user }) {
                     </div>
                     <div className="recipe-detail-nutrient-card">
                         <div className="recipe-detail-nutrient-icon">
-                            <i class="fa-solid fa-water"></i>
+                            <i className="fa-solid fa-water"></i>
                         </div>
                         <h4>Sodium</h4>
                         <p>{recipe.sodium} mg</p>
@@ -139,13 +188,42 @@ export default function RecipeDetail({ recipe, user }) {
 
                 <div className="recipe-detail-instructions recipe-detail-section">
                     <h3>Instructions</h3>
-                    {recipe.instructions.split('.').map((r, index) => (
-                        r.trim() &&
-                        <div className="mb-1" key={r}>
-                            <p className="color-primary medium">Step {index + 1}</p>
-                            <p key={r}>{ r.trim() + '.'}</p>
+                    {recipe.instructions.split(".").map(
+                        (r, index) =>
+                            r.trim() && (
+                                <div className="mb-1" key={index}>
+                                    <p className="color-primary medium">
+                                        Step {index + 1}
+                                    </p>
+                                    <p>{r.trim() + "."}</p>
+                                </div>
+                            )
+                    )}
+                    <div className="recipe-detail-youtube">
+                        <h3>Video Tutorial</h3>
+                        <div className="recipe-detail-youtube-video">
+                            {yt.loading && <p>Loading video...</p>}
+
+                            {!yt.loading && yt.error && (
+                                <p className="error-text">{yt.error}</p>
+                            )}
+
+                            {!yt.loading && !yt.error && yt.embedUrl && (
+                                <iframe
+                                    width="100%"
+                                    height="500"
+                                    src={yt.embedUrl}
+                                    title="YouTube video player"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowFullScreen
+                                />
+                            )}
+
+                            {!yt.loading && !yt.error && !yt.embedUrl && (
+                                <p>No video found for this recipe.</p>
+                            )}
                         </div>
-                    ))}
+                    </div>
                 </div>
             </div>
         </div>

@@ -56,7 +56,7 @@
 .recipe-detail-image {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
-    aspect-ratio: 16 / 12;
+    aspect-ratio: 16 / 11;
     border-radius: 8px;
     max-width: 350px;
     border-radius: 4px;
@@ -150,7 +150,7 @@
     border: 1px solid var(--neutral-400);
     display: flex;
     align-items: center;
-    gap: .75rem;
+    gap: 0.75rem;
     flex: 1 1 200px;
 }
 
@@ -176,6 +176,69 @@
 .recipe-detail-image,
 .recipe-detail-content-box {
     min-width: 0;
+}
+
+/* youtube */
+.recipe-detail-youtube {
+    margin-top: 2rem;
+}
+
+.recipe-detail-youtube-video {
+    aspect-ratio: 16 / 9;
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--neutral-600);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.recipe-detail-youtube-video::before {
+    content: "";
+    display: block;
+    padding-top: 56.25%;
+}
+
+.recipe-detail-youtube-video iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 18px;
+    background: var(--neutral-700);
+}
+
+.recipe-detail-youtube-video p {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    color: var(--white);
+    font-size: 0.95rem;
+    background: linear-gradient(
+        120deg,
+        rgba(34, 197, 94, 0.25),
+        rgba(34, 197, 94, 0.05)
+    );
+    backdrop-filter: blur(4px);
+}
+
+.recipe-detail-youtube-video .error-text {
+    color: var(--danger-600);
+    background: var(--neutral-700);
+}
+
+@media (max-width: 640px) {
+    .recipe-detail-youtube-video {
+        border-radius: 14px;
+    }
+
+    .recipe-detail-youtube-video iframe {
+        border-radius: 14px;
+    }
 }
 
 @media (max-width: 992px) {
@@ -225,6 +288,10 @@
 @media (max-width: 576px) {
     .recipe-detail-page {
         padding-block: 2.5rem;
+    }
+
+    .recipe-detail-youtube-video {
+        aspect-ratio: 16 / 11;
     }
 
     .recipe-detail-title {
