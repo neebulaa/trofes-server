@@ -9,16 +9,26 @@ use App\Models\Ingredient;
 use App\Models\LikeRecipe;
 use Illuminate\Http\Request;
 use App\Models\DietaryPreference;
-use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\Process\Process;
+use Illuminate\Cache\RateLimiting\Limit;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class RecipeController extends Controller
 {
+    private function randomRows($query, int $limit)
+    {
+        $count = (clone $query)->count();
+        if ($count <= $limit) return $query->limit($limit)->get();
+
+        $offset = random_int(0, max(0, $count - $limit));
+        return $query->offset($offset)->limit($limit)->get();
+    }
+
     private function getFilterPillsFromSession(): array
     {
         $sessionKey = 'recipes.filter_pills_v1';
@@ -26,6 +36,7 @@ class RecipeController extends Controller
         if (session()->has($sessionKey)) {
             return session()->get($sessionKey);
         }
+
         $pillOptions = [];
         $pillOptions[] = [
             'key' => 'all',
@@ -41,21 +52,30 @@ class RecipeController extends Controller
             'id' => null,
         ];
 
-        $ingredientPills = Ingredient::inRandomOrder()->limit(6)->get()->map(fn ($i) => [
+        $ingredientPills =$this->randomRows(
+            Ingredient::query()->select(['ingredient_id','ingredient_name']),
+            6
+        )->map(fn ($i) => [
             'key' => "ingredient:{$i->ingredient_id}",
             'label' => ucfirst($i->ingredient_name),
             'type' => 'ingredient',
             'id' => $i->ingredient_id,
         ]);
 
-        $dietPills = DietaryPreference::inRandomOrder()->limit(6)->get()->map(fn ($d) => [
+        $dietPills = $this->randomRows(
+            DietaryPreference::query()->select(['dietary_preference_id','diet_name']),
+            6
+        )->map(fn ($d) => [
             'key' => "diet:{$d->dietary_preference_id}",
             'label' => $d->diet_name,
             'type' => 'diet',
             'id' => $d->dietary_preference_id,
         ]);
 
-        $allergyPills = Allergy::inRandomOrder()->limit(6)->get()->map(fn ($a) => [
+        $allergyPills = $this->randomRows(
+            Allergy::query()->select(['allergy_id','allergy_name']),
+            6
+        )->map(fn ($a) => [
             'key' => "no_allergy:{$a->allergy_id}",
             'label' => 'No ' . $a->allergy_name,
             'type' => 'no_allergy',
@@ -106,18 +126,60 @@ class RecipeController extends Controller
                 return $recommended;
             } else {
                 // Log error kalau mau debugging
-                // \Log::error('API Error: ' . $response->body());
-                // dd("failed");
+                Log::error('API Error: ' . $response->body());
+                dd("failed");
             }
 
         } catch (\Exception $e) {
             // dd("haya failed");
             // Kalau koneksi internet mati atau API down, jangan biarkan web crash
-            // Log::error('Connection Error: ' . $e->getMessage());
-            // dd($e->getMessage());
+            Log::error('Connection Error: ' . $e->getMessage());
+            dd($e->getMessage());
         }
 
         return Recipe::inRandomOrder()->limit($limit)->get();
+    }
+
+    private function getAIRecommendationCached(array $likedRecipeIds, int $limit, ?int $userId)
+    {
+        // cache key based on user + liked ids
+        $hash = md5(json_encode($likedRecipeIds));
+        $cacheKey = "ai_rec_v1:user={$userId}:h={$hash}:limit={$limit}";
+
+        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($likedRecipeIds, $limit) {
+            if (empty($likedRecipeIds)) {
+                return Recipe::inRandomOrder()
+                    ->limit($limit)
+                    ->get();
+            }
+
+            try {
+                $response = Http::timeout(2)
+                    ->retry(1, 200)
+                    ->post('https://arnight-trofes-api.hf.space/recommend', [
+                        'liked_ids' => $likedRecipeIds,
+                        'top_k' => $limit,
+                        'is_start_from_zero' => false,
+                    ]);
+
+                if (!$response->successful()) {
+                    Log::warning('AI recommend failed', ['status' => $response->status()]);
+                    return collect(); // no cache of error response body
+                }
+
+                $recommendedIds = $response->json('recommended_ids') ?? [];
+                if (empty($recommendedIds)) return collect();
+
+                $idsString = implode(',', $recommendedIds);
+
+                return Recipe::whereIn('recipe_id', $recommendedIds)
+                    ->orderByRaw("FIELD(recipe_id, $idsString)")
+                    ->get();
+            } catch (\Throwable $e) {
+                Log::warning('AI recommend exception', ['msg' => $e->getMessage()]);
+                return collect();
+            }
+        });
     }
 
     public function index(Request $request)
@@ -129,6 +191,7 @@ class RecipeController extends Controller
         $filterId = $request->query('filter_id'); // integer for ingredient/diet/no_allergy
 
         $query = Recipe::query()
+            ->select(['recipe_id','title','slug','image','cooking_time'])
             ->withCount('likes')
             ->when($request->user(), function ($q) use ($request) {
                 $q->withExists([
@@ -170,7 +233,7 @@ class RecipeController extends Controller
             $recipe->is_favorite = ($maxLikes > 0) && ((int) $recipe->likes_count === (int) $maxLikes);
             return $recipe;
         });
-        
+
         if ($request->boolean('refresh_pills')) {
             session()->forget('recipes.filter_pills_v1');
         }
@@ -178,13 +241,27 @@ class RecipeController extends Controller
         $pillOptions = $this->getFilterPillsFromSession();
         $userLikedIds = [];
         if(Auth::check()){
-            $userLikedIds = \App\Models\LikeRecipe::where('user_id', Auth::id())->pluck('recipe_id')->toArray();
+            $userLikedIds = LikeRecipe::where('user_id', Auth::id())->pluck('recipe_id')->toArray();
+        }
+
+        $hero_count = 5;
+        $recommended_count = 4;
+        $userId = $request->user()->user_id;
+        $ai = $this->getAIRecommendationCached($userLikedIds, $hero_count + $recommended_count, $userId);
+        $hero = $ai->take($hero_count)->values();
+        $recommended = $ai->slice($hero_count, $recommended_count)->values();
+
+        // fallback if AI empty
+        if ($hero->isEmpty()) {
+            $fallback = Recipe::inRandomOrder()->limit($hero_count + $recommended_count)->get();
+            $hero = $fallback->take($hero_count)->values();
+            $recommended = $fallback->slice($hero_count, $recommended_count)->values();
         }
 
         return Inertia::render('Recipes', [
             'recipes' => $recipes,
-            'hero_recipes' => $this->getAIRecommendation($userLikedIds, 5),
-            'recommended_recipes' => $this->getAIRecommendation($userLikedIds, 12),
+            'hero_recipes' => $hero,
+            'recommended_recipes' => $recommended,
             'recipe_filter_options' => $pillOptions,
             'active_filter' => [
                 'type' => $filterType,
