@@ -1157,6 +1157,18 @@ select:focus,
     opacity: 0;
 }
 
+.color-primary {
+    color: var(--primary-600);
+}
+
+.medium {
+    font-weight: 500;
+}
+
+.semibold {
+    font-weight: 600;
+}
+
 .mt-1 {
     margin-top: 1rem;
 }
