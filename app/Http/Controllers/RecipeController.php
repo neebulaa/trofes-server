@@ -146,11 +146,9 @@ class RecipeController extends Controller
         $hash = md5(json_encode($likedRecipeIds));
         $cacheKey = "ai_rec_v1:user={$userId}:h={$hash}:limit={$limit}";
 
-        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($likedRecipeIds, $limit) {
+        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($likedRecipeIds, $limit, $userId) {
             if (empty($likedRecipeIds)) {
-                return Recipe::inRandomOrder()
-                    ->limit($limit)
-                    ->get();
+                return collect();
             }
 
             try {
@@ -158,7 +156,7 @@ class RecipeController extends Controller
                     ->retry(1, 200)
                     ->post('https://arnight-trofes-api.hf.space/recommend', [
                         'liked_ids' => $likedRecipeIds,
-                        'top_k' => $limit,
+                        'top_k' => max(50, $limit * 2), // make threshold for recomendation
                         'is_start_from_zero' => false,
                     ]);
 
@@ -170,10 +168,32 @@ class RecipeController extends Controller
                 $recommendedIds = $response->json('recommended_ids') ?? [];
                 if (empty($recommendedIds)) return collect();
 
+                // Hard Filtering
+                $query = Recipe::query()->whereIn('recipe_id', $recommendedIds);
+                $user = Auth::user();
+
+                //Filter Allergy
+                $userAllergyIds = $user->allergies->pluck('allergy_id')->toArray();
+                if (!empty($userAllergyIds)) {
+                    $query->whereDoesntHave('allergies', function ($q) use ($userAllergyIds) {
+                        $q->whereIn('allergies.allergy_id', $userAllergyIds);
+                    });
+                }
+
+                //Filter Diet
+                $userDietIds = $user->dietaryPreferences->pluck('dietary_preference_id')->toArray();
+                if (!empty($userDietIds)) {
+                    foreach ($userDietIds as $dietId) {
+                        $query->whereHas('dietaryPreferences', function ($q) use ($dietId) {
+                            $q->where('dietary_preferences.dietary_preference_id', $dietId);
+                        });
+                    }
+                }
+
                 $idsString = implode(',', $recommendedIds);
 
-                return Recipe::whereIn('recipe_id', $recommendedIds)
-                    ->orderByRaw("FIELD(recipe_id, $idsString)")
+                return $query->orderByRaw("FIELD(recipe_id, $idsString)")
+                    ->take($limit)
                     ->get();
             } catch (\Throwable $e) {
                 Log::warning('AI recommend exception', ['msg' => $e->getMessage()]);
