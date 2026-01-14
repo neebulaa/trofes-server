@@ -4,7 +4,7 @@ allergy_id,allergy_code,allergy_name,examples
 3,fish,Fish,"fish, fish stock, seafood sauce"
 4,shellfish,Shellfish,"shrimp, lobster, crab"
 5,soy,Soy,"tofu, tempeh, soybeans"
-6,sesame,Sesame,"sesame seeds & oil"
+6,sesame,Sesame,sesame seeds & oil
 7,wheat,Wheat,"bread, pasta, gluten foods"
-8,peanut,Peanut,"peanuts & processed"
+8,peanut,Peanut,peanuts & processed
 9,tree_nut,Tree Nut,"almonds, pistachios, walnuts"
