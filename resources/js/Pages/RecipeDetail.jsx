@@ -53,6 +53,25 @@ export default function RecipeDetail({ recipe, user }) {
         };
     }, [recipe.title]);
 
+    function splitIngredientsSmart(text) {
+        if (!text) return [];
+
+        // normalize spaces
+        const s = text.replace(/\s+/g, " ").trim();
+
+        // split at places where a new ingredient likely starts:
+        // ", " followed by:
+        // - a number (2, 10)
+        // - a fraction (1/2)
+        // - a mixed number (1 1/2)
+        // - "a" or "an"
+        const parts = s.split(
+            /,\s+(?=(?:\d+\s+\d+\/\d+|\d+\/\d+|\d+|a|an)\b)/i
+        );
+
+        return parts.map((p) => p.trim()).filter(Boolean);
+    }
+
     return (
         <div className="recipe-detail-page container">
             <div className="recipe-detail-header">
@@ -183,7 +202,13 @@ export default function RecipeDetail({ recipe, user }) {
             <div className="recipe-detail-ingr-inst">
                 <div className="recipe-detail-ingredients recipe-detail-section">
                     <h3>Measured Ingredients</h3>
-                    <p>{recipe.measured_ingredients}</p>
+                    <ul>
+                        {splitIngredientsSmart(recipe.measured_ingredients).map(
+                            (ingr, index) => (
+                                <li key={index}>{ingr}</li>
+                            )
+                        )}
+                    </ul>
                 </div>
 
                 <div className="recipe-detail-instructions recipe-detail-section">
