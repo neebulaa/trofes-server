@@ -142,21 +142,22 @@ class RecipeController extends Controller
 
     private function getAIRecommendationCached(array $likedRecipeIds, int $limit, ?int $userId)
     {
+        if (empty($likedRecipeIds)) {
+            return Recipe::inRandomOrder()
+                ->limit($limit)
+                ->get();
+        }
+
         // cache key based on user + liked ids
         $hash = md5(json_encode($likedRecipeIds));
-        $cacheKey = "ai_rec_v1:user={$userId}:h={$hash}:limit={$limit}";
+        $cacheKey = "ai_rec_fin:user={$userId}:h={$hash}:limit={$limit}";
 
-        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($likedRecipeIds, $limit, $userId) {
-            if (empty($likedRecipeIds)) {
-                return collect();
-            }
-
+        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($likedRecipeIds, $limit) {
             try {
-                $response = Http::timeout(2)
-                    ->retry(1, 200)
+                $response = Http::withoutVerifying()->timeout(2)
                     ->post('https://arnight-trofes-api.hf.space/recommend', [
                         'liked_ids' => $likedRecipeIds,
-                        'top_k' => max(50, $limit * 2), // make threshold for recomendation
+                        'top_k' => max(50, $limit * 2),
                         'is_start_from_zero' => false,
                     ]);
 
@@ -165,40 +166,60 @@ class RecipeController extends Controller
                     return collect(); // no cache of error response body
                 }
 
-                $recommendedIds = $response->json('recommended_ids') ?? [];
-                if (empty($recommendedIds)) return collect();
+                if($response->successful()){
+                    $recommendedIds = $response->json('recommended_ids') ?? [];
 
-                // Hard Filtering
-                $query = Recipe::query()->whereIn('recipe_id', $recommendedIds);
-                $user = Auth::user();
-
-                //Filter Allergy
-                $userAllergyIds = $user->allergies->pluck('allergy_id')->toArray();
-                if (!empty($userAllergyIds)) {
-                    $query->whereDoesntHave('allergies', function ($q) use ($userAllergyIds) {
-                        $q->whereIn('allergies.allergy_id', $userAllergyIds);
-                    });
-                }
-
-                //Filter Diet
-                $userDietIds = $user->dietaryPreferences->pluck('dietary_preference_id')->toArray();
-                if (!empty($userDietIds)) {
-                    foreach ($userDietIds as $dietId) {
-                        $query->whereHas('dietaryPreferences', function ($q) use ($dietId) {
-                            $q->where('dietary_preferences.dietary_preference_id', $dietId);
-                        });
+                    if (empty($recommendedIds)) {
+                        return Recipe::inRandomOrder()->limit($limit)->get();
                     }
+
+                    // 3. Mulai Hard Filtering (Logika Kode Awalmu)
+                    $query = Recipe::query()->whereIn('recipe_id', $recommendedIds);
+
+                    $user = Auth::user();
+                    if ($user) {
+                        // Filter Alergi
+                        $userAllergyIds = $user->allergies->pluck('allergy_id')->toArray();
+                        if (!empty($userAllergyIds)) {
+                            $query->whereDoesntHave('allergies', function ($q) use ($userAllergyIds) {
+                                $q->whereIn('allergies.allergy_id', $userAllergyIds);
+                            });
+                        }
+
+                        // Filter Diet
+                        $userDietIds = $user->dietaryPreferences->pluck('dietary_preference_id')->toArray();
+                        if (!empty($userDietIds)) {
+                            foreach ($userDietIds as $dietId) {
+                                $query->whereHas('dietaryPreferences', function ($q) use ($dietId) {
+                                    $q->where('dietary_preferences.dietary_preference_id', $dietId);
+                                });
+                            }
+                        }
+                    }
+
+                    // Ambil hasil sesuai urutan rekomendasi AI
+                    $idsString = implode(',', $recommendedIds);
+                    $recommended = $query->orderByRaw("FIELD(recipe_id, $idsString)")
+                        ->take($limit)
+                        ->get();
+
+                    // 4. Fallback jika setelah difilter hasilnya kurang dari limit
+                    if ($recommended->count() < $limit) {
+                        $needed = $limit - $recommended->count();
+                        $extra = Recipe::whereNotIn('recipe_id', $recommended->pluck('recipe_id'))
+                                    ->inRandomOrder()
+                                    ->limit($needed)
+                                    ->get();
+                        $recommended = $recommended->concat($extra);
+                    }
+
+                    return $recommended;
                 }
-
-                $idsString = implode(',', $recommendedIds);
-
-                return $query->orderByRaw("FIELD(recipe_id, $idsString)")
-                    ->take($limit)
-                    ->get();
             } catch (\Throwable $e) {
                 Log::warning('AI recommend exception', ['msg' => $e->getMessage()]);
                 return collect();
             }
+            return Recipe::inRandomOrder()->limit($limit)->get();
         });
     }
 
