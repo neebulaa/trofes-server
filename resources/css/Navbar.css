@@ -78,7 +78,7 @@ header {
 
 .hamburger span {
     display: block;
-    width: 1.25rem;
+    width: 1rem;
     height: 0.1575rem;
     background: var(--neutral-600);
     border-radius: 0.125rem;
@@ -112,7 +112,7 @@ header {
     padding: 0;
     border-radius: 999px;
     border: none;
-    background: var(--white);
+    background: none;
     cursor: pointer;
     font-weight: 500;
 }
@@ -164,21 +164,6 @@ header {
     background :none;
 }
 
-#auth-navbar .nav-content-auth .user-profile {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    border: 1px solid var(--neutral-400);
-}
-
-#auth-navbar .nav-content-auth .user-profile img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
 .nav-content-auth {
     display: flex;
     align-items: center;
@@ -222,7 +207,7 @@ header {
         width: 70vw;
         background: var(--white);
         z-index: 1100;
-        height: 100vh;
+        height: 100dvh;
         flex-direction: column;
         translate: 100%;
         transition: .3s;
@@ -321,8 +306,6 @@ header {
         visibility: visible;
     }
 
-    
-
     /* nav guest */
     .nav-content {
         position: fixed;
@@ -331,7 +314,7 @@ header {
         width: 70vw;
         background: var(--white);
         z-index: 1100;
-        height: 100vh;
+        height: 100dvh;
         flex-direction: column;
         translate: 100%;
         transition: .3s;
@@ -376,5 +359,11 @@ header {
 
     .nav.nav-open .nav-content {
         translate: 0;
+    }
+}
+
+@media (max-width: 480px){
+    .nav {
+        gap: .5rem;
     }
 }

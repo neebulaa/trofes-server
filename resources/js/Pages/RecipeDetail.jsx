@@ -17,7 +17,7 @@ export default function RecipeDetail({ recipe, user }) {
             try {
                 setYt({ loading: true, embedUrl: null, error: null });
 
-                // You can tweak the query to improve results
+                // just tweak the query to improve results
                 const query = `how to make ${recipe.title} recipe`;
 
                 const res = await fetch(
@@ -81,7 +81,7 @@ export default function RecipeDetail({ recipe, user }) {
 
                 <div className="recipe-detail-content-box">
                     <h1 className="recipe-detail-title">{recipe.title}</h1>
-                    <p>
+                    <p className="mt-05">
                         {recipe.dietary_preferences.length > 0 &&
                             recipe.dietary_preferences
                                 .map((d) => d.diet_name)

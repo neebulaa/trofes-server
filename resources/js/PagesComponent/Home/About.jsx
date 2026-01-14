@@ -14,14 +14,14 @@ export default function About(){
 
             <div className="about-bottom">
                 <div className="stats">
-                <div className="stat">
-                    <div className="label">Jumlah Resep</div>
-                    <div className="value">13K +</div>
-                </div>
-                <div className="stat">
-                    <div className="label">Jumlah Bahan Dikenali</div>
-                    <div className="value">10K +</div>
-                </div>
+                    <div className="stat">
+                        <div className="label">Jumlah Resep</div>
+                        <div className="value">13K +</div>
+                    </div>
+                    <div className="stat">
+                        <div className="label">Jumlah Bahan Dikenali</div>
+                        <div className="value">10K +</div>
+                    </div>
                 </div>
 
                 <div className="about-cta">

@@ -83,6 +83,7 @@ ol {
 }
 
 html {
+    overflow-x: hidden;
     scroll-behavior: smooth;
     font-size: calc(16px * var(--ui-scale));
 }
@@ -399,7 +400,7 @@ select:focus,
     align-items: center;
     justify-content: center;
 
-    padding: 0.575rem 2rem;
+    padding: 0.75rem 2rem;
     border-radius: 0.525rem;
 
     font-weight: 500;
@@ -728,7 +729,7 @@ select:focus,
 }
 
 .profile-dropdown-desc .profile-info {
-    font-size: 0.85rem;
+    font-size: .9rem;
     display: flex;
     flex-direction: column;
     line-height: 1.3;
@@ -752,12 +753,12 @@ select:focus,
     height: 2.5rem;
     border-radius: 50%;
     cursor: pointer;
-    border: 1px solid var(--neutral-400);
+    border: 1px solid var(--neutral-300);
 }
 
 .dropdown-item {
     min-width: calc(var(--size) * var(--ui-scale));
-    font-size: 0.9rem;
+    font-size: 1rem;
     padding: 0.75rem 1rem;
     width: 100%;
     cursor: pointer;
@@ -785,7 +786,7 @@ select:focus,
     border-radius: 50%;
     overflow: hidden;
     cursor: pointer;
-    border: 1px solid var(--neutral-400);
+    border: 1px solid var(--line);
 }
 
 .profile-dropdown .user-profile img {
@@ -813,7 +814,7 @@ select:focus,
 .paginator {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: .5rem;
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 2rem;
@@ -852,9 +853,13 @@ select:focus,
     box-shadow: none;
 }
 
+.paginator-btn {
+    background: var(--neutral-200);
+}
+
 .paginator-pages {
     display: flex;
-    gap: 8px;
+    gap: .5rem;
     flex-wrap: wrap;
     justify-content: center;
 }
@@ -1027,6 +1032,8 @@ select:focus,
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 /* guides card and container */
@@ -1093,11 +1100,13 @@ select:focus,
     display: grid;
     place-items: center;
     z-index: 1000;
+    padding-inline: 1.5rem;
 }
 
 .modal-content {
     background: #fff;
-    width: 370px;
+    width: 100%;
+    max-width: 370px;
     padding: 1rem;
     border-radius: 0.75rem;
 }
@@ -1249,5 +1258,13 @@ select:focus,
 
     .container {
         padding-inline: 1.5rem;
+    }
+
+    .recipe-card-badge {
+        max-width: 100px;
+    }
+
+    .recipe-card .recipe-info {
+        font-size: 0.9rem;
     }
 }

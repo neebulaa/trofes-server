@@ -9,8 +9,8 @@ export default function Icon ({ name }) {
         chevronLeft: <i className="fa-solid fa-chevron-left" aria-hidden="true" />,
         menu: <i className="fa-solid fa-bars" aria-hidden="true" />,
         close: <i className="fa-solid fa-xmark" aria-hidden="true" />,
-        allergies: <i class="fa-solid fa-shrimp"></i>,
-        diet: <i class="fa-regular fa-lemon"></i>
+        allergies: <i className="fa-solid fa-shrimp"></i>,
+        diet: <i className="fa-regular fa-lemon"></i>
     };
 
     return (

@@ -1,7 +1,7 @@
 import { Link, useForm, usePage, router } from "@inertiajs/react";
 import Dropdown from "./Dropdown";
 import ProfileDropdown from "./ProfileDropdown";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import NavLinks from "./NavLinks";
 
 export default function NavbarAuth({ user }) {
@@ -18,8 +18,41 @@ export default function NavbarAuth({ user }) {
         return window.innerWidth > 768 ? true : false;
     });
 
+    const navRef = useRef(null);
+    const hamburgerRef = useRef(null);
+    const searchRef = useRef(null);
+
+    useEffect(() => {
+        function handleClickOutside(e) {
+            if (!open) return;
+            const clickedInsideNav = navRef.current?.contains(e.target);
+            const clickedInsideSearch = searchRef.current?.contains(e.target);
+            const clickedHamburger = hamburgerRef.current?.contains(e.target);
+
+            if (
+                !clickedInsideNav &&
+                !clickedInsideSearch &&
+                !clickedHamburger
+            ) {
+                setOpen(false);
+            }
+        }
+
+        document.addEventListener("pointerdown", handleClickOutside, {
+            passive: true,
+        });
+        return () => {
+            document.removeEventListener("pointerdown", handleClickOutside);
+        };
+    }, [open]);
+
     useEffect(() => {
         function handleResize() {
+            const currentWidth = window.innerWidth;
+            if (currentWidth === lastWidthRef.current) return;
+
+            lastWidthRef.current = currentWidth;
+
             if (window.innerWidth <= 768) {
                 setRenderSearch(false);
                 setOpenSearch(false);
@@ -98,6 +131,7 @@ export default function NavbarAuth({ user }) {
 
                 {renderSearch && (
                     <form
+                        ref={searchRef}
                         className={`nav-search-container${
                             openSearch ? " nav-search-open" : ""
                         }`}
@@ -140,7 +174,7 @@ export default function NavbarAuth({ user }) {
                     </form>
                 )}
 
-                <div className="nav-content">
+                <div className="nav-content" ref={navRef}>
                     <NavLinks url={url} handleNavigate={handleNavigate} />
                 </div>
 
@@ -151,7 +185,7 @@ export default function NavbarAuth({ user }) {
                         className="custom-search-btn"
                     >
                         <i className="fa-brands fa-searchengin"></i>
-                        <p>Custom Search</p>
+                        <p>Custom</p>
                     </Link>
 
                     <ProfileDropdown user={user} />
@@ -161,6 +195,7 @@ export default function NavbarAuth({ user }) {
                     className="hamburger"
                     aria-label="menu"
                     onClick={openNavbar}
+                    ref={hamburgerRef}
                 >
                     <span></span>
                     <span></span>

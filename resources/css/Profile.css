@@ -23,7 +23,7 @@
     overflow: hidden;
     margin-bottom: 1rem;
     border: 1px solid var(--line);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 0px 4px rgba(0, 0, 0, 0.01);
 }
 
 .profile-left .profile-image-container {
@@ -123,7 +123,7 @@
     display: flex;
     gap: .5rem;
     align-items: center;
-    padding: .25rem .5rem;
+    padding: .425rem .5rem;
     border-radius: 4px;
     background-color: var(--white);
     color: var(--primary-700);

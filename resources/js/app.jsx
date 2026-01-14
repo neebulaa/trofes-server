@@ -6,8 +6,11 @@ import "../css/init.css";
 
 createInertiaApp({
     resolve: (name) => {
-        const pages = import.meta.glob("./Pages/**/*.jsx", { eager: true });
-        return pages[`./Pages/${name}.jsx`];
+        // const pages = import.meta.glob("./Pages/**/*.jsx", { eager: true });
+        // return pages[`./Pages/${name}.jsx`];
+        const pages = import.meta.glob("./Pages/**/*.jsx");
+        return pages[`./Pages/${name}.jsx`]()
+            .then(module => module);
     },
     setup({ el, App, props }) {
         createRoot(el).render(<App {...props} />);

@@ -99,8 +99,8 @@
     width: 40px;
     height: 40px;
     border-radius: 10px;
-    border: 1px solid var(--neutral-400);
-    background: var(--neutral-50);
+    border: 1px solid var(--neutral-300);
+    background: var(--white);
     cursor: pointer;
     display: grid;
     place-items: center;

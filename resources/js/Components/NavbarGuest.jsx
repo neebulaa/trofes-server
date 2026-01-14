@@ -1,5 +1,5 @@
 import { usePage } from "@inertiajs/react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import NavLinks from "./NavLinks";
 import { Link } from "@inertiajs/react";
 
@@ -15,6 +15,26 @@ export default function Navbar() {
         setOpen(false);
     }
 
+    const navRef = useRef(null);
+    const hamburgerRef = useRef(null);
+
+    useEffect(() => {
+        function handleClickOutside(e) {
+            if (!open) return;
+            const clickedInsideNav = navRef.current?.contains(e.target);
+            const clickedHamburger = hamburgerRef.current?.contains(e.target);
+
+            if (!clickedInsideNav && !clickedHamburger) {
+                setOpen(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [open]);
+
     return (
         <header>
             <nav className={`container nav ${open ? "nav-open" : ""}`}>
@@ -26,7 +46,7 @@ export default function Navbar() {
                         />
                     </Link>
                 </div>
-                <div className="nav-content">
+                <div className="nav-content" ref={navRef}>
                     <NavLinks url={url} handleNavigate={handleNavigate} />
 
                     <div className="nav-action">
@@ -38,6 +58,7 @@ export default function Navbar() {
                 </div>
 
                 <button
+                    ref={hamburgerRef}
                     className="hamburger"
                     aria-label="menu"
                     onClick={openNavbar}

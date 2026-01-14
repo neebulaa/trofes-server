@@ -18,7 +18,7 @@ export default function Paginator({
     paginator,
     onNavigate,
     className = "",
-    maxVisible = 5,
+    maxVisible = window.innerWidth < 640 ? 2 : 5,
 }) {
     if (!paginator) return null;
 
@@ -85,7 +85,7 @@ export default function Paginator({
                 onClick={() => navigate(prevUrl)}
                 disabled={!prevUrl}
             >
-                &lt; Prev
+                &lt;
             </button>
 
             <div className="paginator-pages">
@@ -137,7 +137,7 @@ export default function Paginator({
                 onClick={() => navigate(nextUrl)}
                 disabled={!nextUrl}
             >
-                Next &gt;
+                &gt;
             </button>
         </nav>
     );
