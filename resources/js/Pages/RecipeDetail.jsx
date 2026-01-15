@@ -55,18 +55,29 @@ export default function RecipeDetail({ recipe, user }) {
 
     function splitIngredientsSmart(text) {
         if (!text) return [];
-
-        // normalize spaces
         const s = text.replace(/\s+/g, " ").trim();
 
-        // split at places where a new ingredient likely starts:
-        // ", " followed by:
-        // - a number (2, 10)
-        // - a fraction (1/2)
-        // - a mixed number (1 1/2)
-        // - "a" or "an"
+        // without a qty number start
+        const noQtyStarts = [
+            "freshly",
+            "ground",
+            "salt",
+            "pepper",
+            "kosher",
+            "black",
+            "white",
+            "olive oil",
+            "oil",
+            "butter",
+        ];
+
         const parts = s.split(
-            /,\s+(?=(?:\d+\s+\d+\/\d+|\d+\/\d+|\d+|a|an)\b)/i
+            new RegExp(
+                String.raw`,\s+(?=(?:\d+\s+\d+\/\d+|\d+\/\d+|\d+|a|an)\b|(?:${noQtyStarts
+                    .map((x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+                    .join("|")})\b)`,
+                "i"
+            )
         );
 
         return parts.map((p) => p.trim()).filter(Boolean);
