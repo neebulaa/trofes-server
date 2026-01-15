@@ -84,63 +84,33 @@ export default function RecipeDetail({ recipe, user }) {
         return parts.map((p) => p.trim()).filter(Boolean);
     }
 
+    function splitAfterParen(step) {
+        // split when we have: ") " followed by a capital letter (new sentence)
+        // example: "(... occasionally.) Transfer lamb..." -> split at ") "
+        const parts = step.split(/\)\s+(?=[A-Z0-9])/g);
+
+        if (parts.length <= 1) return [step];
+
+        // Put the ')' back except the last part
+        return parts.map((p, i) =>
+            i < parts.length - 1 ? p.trim() + ")" : p.trim()
+        );
+    }
+
     function splitInstructionsSmart(text) {
         if (!text) return [];
 
-        // normalize whitespace
         let s = String(text)
             .replace(/\r\n/g, "\n")
+            .replace(/\u00A0/g, " ")
             .replace(/[ \t]+/g, " ")
+            .replace(/\n+/g, " ")
             .trim();
 
-        // if it already has line-based steps, use that
-        const lines = s
-            .split("\n")
-            .map((l) => l.trim())
-            .filter(Boolean);
-
-        const stepLike = lines.filter((l) =>
-            /^(\d+[\).\s-]|step\s+\d+[:.)\s-])/i.test(l)
-        ).length;
-        if (
-            lines.length >= 3 &&
-            (stepLike >= 2 || lines.every((l) => l.length >= 12))
-        ) {
-            return lines.map((l) =>
-                l.replace(/^(\d+[\).\s-]|step\s+\d+[:.)\s-])\s*/i, "").trim()
-            );
-        }
-
-        // protect decimals: 1.5 -> 1<dot>5
+        // protect decimals: 1.5
         s = s.replace(/(\d)\.(\d)/g, "$1<dot>$2");
 
-        // protect common abbreviations
-        const abbrev = [
-            "e.g",
-            "i.e",
-            "etc",
-            "vs",
-            "approx",
-            "min",
-            "mins",
-            "sec",
-            "secs",
-            "tbsp",
-            "tsp",
-            "oz",
-            "lb",
-            "lbs",
-            "p.m",
-            "a.m",
-        ];
-
-        for (const a of abbrev) {
-            const re = new RegExp(`\\b${a.replace(".", "\\.")}\\.`, "gi");
-            s = s.replace(re, (m) => m.replace(".", "<dot>"));
-        }
-
-        // protect punctuation inside parentheses so we don't split inside ( ... )
-        // replace . ! ? inside parentheses with placeholders
+        // protect punctuation inside parentheses
         s = s.replace(/\(([^)]*)\)/g, (full, inner) => {
             const safe = inner
                 .replace(/\./g, "<p>")
@@ -149,7 +119,6 @@ export default function RecipeDetail({ recipe, user }) {
             return `(${safe})`;
         });
 
-        // split on sentence end punctuation when followed by a new sentence start
         let parts = s.split(/(?<=[.!?])\s+(?=[A-Z0-9(])/g);
 
         // restore placeholders
@@ -162,12 +131,10 @@ export default function RecipeDetail({ recipe, user }) {
                 .trim()
         );
 
-        // merge parenthetical-only sentences back to previous step
+        // merge parenthetical-only sentences into previous
         const merged = [];
         for (const p of parts) {
             if (!p) continue;
-
-            // if this chunk starts with '(' it's probably a note: attach to previous
             if (p.startsWith("(") && merged.length) {
                 merged[merged.length - 1] = `${
                     merged[merged.length - 1]
@@ -177,7 +144,10 @@ export default function RecipeDetail({ recipe, user }) {
             }
         }
 
-        return merged.filter(Boolean);
+        // split any step that has ") <NewSentence>"
+        const finalSteps = merged.flatMap(splitAfterParen);
+
+        return finalSteps.filter(Boolean);
     }
 
     return (
@@ -323,7 +293,6 @@ export default function RecipeDetail({ recipe, user }) {
 
                     <div className="recipe-detail-instructions recipe-detail-section">
                         <h3>Instructions</h3>
-                        {recipe.instructions}
                         {splitInstructionsSmart(recipe.instructions).map(
                             (step, index) => (
                                 <div className="mb-1" key={index}>
