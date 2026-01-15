@@ -136,14 +136,39 @@ export default function RecipeDetail({ recipe, user }) {
         return parts.map((p) => p.trim()).filter(Boolean);
     }
 
+    function stripLeadingStepNumber(s) {
+        return s
+            .replace(/^\s*(?:step\s*)?\d+\s*(?:[.)-]|:)\s*/i, "") // "1. " / "2) " / "Step 3: "
+            .trim();
+    }
+
+    function splitByNumberedList(text) {
+        // normalize line endings
+        const s = String(text).replace(/\r\n/g, "\n").trim();
+
+        // detect if it looks like a numbered recipe (has many "1." / "2." / "3." starts)
+        const matches =
+            s.match(/(?:^|\n)\s*(?:step\s*)?\d+\s*[.)-]\s+/gi) ?? [];
+        const looksNumbered = matches.length >= 2;
+
+        if (!looksNumbered) return null;
+
+        // split when a new numbered item starts (beginning or after newline)
+        const raw = s.split(/(?:^|\n)\s*(?=(?:step\s*)?\d+\s*[.)-]\s+)/i);
+
+        const cleaned = raw
+            .map((part) => stripLeadingStepNumber(part))
+            .map((part) =>
+                part.replace(/\n+/g, " ").replace(/\s+/g, " ").trim()
+            )
+            .filter(Boolean);
+
+        return cleaned.length ? cleaned : null;
+    }
+
     function splitAfterParen(step) {
-        // split when we have: ") " followed by a capital letter (new sentence)
-        // example: "(... occasionally.) Transfer lamb..." -> split at ") "
         const parts = step.split(/\)\s+(?=[A-Z0-9])/g);
-
         if (parts.length <= 1) return [step];
-
-        // Put the ')' back except the last part
         return parts.map((p, i) =>
             i < parts.length - 1 ? p.trim() + ")" : p.trim()
         );
@@ -152,12 +177,24 @@ export default function RecipeDetail({ recipe, user }) {
     function splitInstructionsSmart(text) {
         if (!text) return [];
 
+        // if the text is clearly a numbered list, use that first
+        const numbered = splitByNumberedList(text);
+        if (numbered) {
+            // optional to still split each numbered step into sentences if want smaller steps:
+            // return numbered.flatMap(splitInstructionsSmart);
+            return numbered;
+        }
+
+        // otherwise fallback to sentence splitting
         let s = String(text)
             .replace(/\r\n/g, "\n")
             .replace(/\u00A0/g, " ")
             .replace(/[ \t]+/g, " ")
             .replace(/\n+/g, " ")
             .trim();
+
+        // remove stray "1." at start (when not caught by numbered list)
+        s = s.replace(/^\s*(?:step\s*)?\d+\s*[.)-]\s*/i, "");
 
         // protect decimals: 1.5
         s = s.replace(/(\d)\.(\d)/g, "$1<dot>$2");
@@ -173,33 +210,30 @@ export default function RecipeDetail({ recipe, user }) {
 
         let parts = s.split(/(?<=[.!?])\s+(?=[A-Z0-9(])/g);
 
-        // restore placeholders
-        parts = parts.map((x) =>
-            x
-                .replace(/<dot>/g, ".")
-                .replace(/<p>/g, ".")
-                .replace(/<e>/g, "!")
-                .replace(/<q>/g, "?")
-                .trim()
-        );
+        parts = parts
+            .map((x) =>
+                x
+                    .replace(/<dot>/g, ".")
+                    .replace(/<p>/g, ".")
+                    .replace(/<e>/g, "!")
+                    .replace(/<q>/g, "?")
+                    .trim()
+            )
+            .filter(Boolean);
 
         // merge parenthetical-only sentences into previous
         const merged = [];
         for (const p of parts) {
-            if (!p) continue;
-            if (p.startsWith("(") && merged.length) {
-                merged[merged.length - 1] = `${
-                    merged[merged.length - 1]
-                } ${p}`.trim();
-            } else {
-                merged.push(p);
-            }
+            if (p.startsWith("(") && merged.length)
+                merged[merged.length - 1] += ` ${p}`;
+            else merged.push(p);
         }
 
         // split any step that has ") <NewSentence>"
-        const finalSteps = merged.flatMap(splitAfterParen);
-
-        return finalSteps.filter(Boolean);
+        return merged
+            .flatMap(splitAfterParen)
+            .map((x) => x.trim())
+            .filter(Boolean);
     }
 
     return (
