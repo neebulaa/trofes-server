@@ -317,6 +317,9 @@ class RecipeController extends Controller
         return Inertia::render('RecipeDetail', [
             'recipe' => $recipe->loadCount('likes'),
             'user' => Auth::user(),
+        ])->with('flash', [
+            'type' => 'error',
+            "message" => "This food contains allergens that you are sensitive to. Please be cautious when preparing or consuming this dish."
         ]);
     }
 

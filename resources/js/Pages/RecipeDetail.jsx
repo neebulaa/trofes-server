@@ -1,6 +1,7 @@
 import Layout from "../Layouts/Layout";
 import "../../css/RecipeDetail.css";
 import { useState, useEffect } from "react";
+import FlashMessage from "../Components/FlashMessage";
 
 export default function RecipeDetail({ recipe, user }) {
     const [liked, setLiked] = useState(true);
@@ -83,186 +84,285 @@ export default function RecipeDetail({ recipe, user }) {
         return parts.map((p) => p.trim()).filter(Boolean);
     }
 
+    function splitInstructionsSmart(text) {
+        if (!text) return [];
+
+        // normalize whitespace
+        let s = String(text)
+            .replace(/\r\n/g, "\n")
+            .replace(/[ \t]+/g, " ")
+            .trim();
+
+        // if it already has line-based steps, use that
+        const lines = s
+            .split("\n")
+            .map((l) => l.trim())
+            .filter(Boolean);
+
+        const stepLike = lines.filter((l) =>
+            /^(\d+[\).\s-]|step\s+\d+[:.)\s-])/i.test(l)
+        ).length;
+        if (
+            lines.length >= 3 &&
+            (stepLike >= 2 || lines.every((l) => l.length >= 12))
+        ) {
+            return lines.map((l) =>
+                l.replace(/^(\d+[\).\s-]|step\s+\d+[:.)\s-])\s*/i, "").trim()
+            );
+        }
+
+        // protect decimals: 1.5 -> 1<dot>5
+        s = s.replace(/(\d)\.(\d)/g, "$1<dot>$2");
+
+        // protect common abbreviations
+        const abbrev = [
+            "e.g",
+            "i.e",
+            "etc",
+            "vs",
+            "approx",
+            "min",
+            "mins",
+            "sec",
+            "secs",
+            "tbsp",
+            "tsp",
+            "oz",
+            "lb",
+            "lbs",
+            "p.m",
+            "a.m",
+        ];
+
+        for (const a of abbrev) {
+            const re = new RegExp(`\\b${a.replace(".", "\\.")}\\.`, "gi");
+            s = s.replace(re, (m) => m.replace(".", "<dot>"));
+        }
+
+        // protect punctuation inside parentheses so we don't split inside ( ... )
+        // replace . ! ? inside parentheses with placeholders
+        s = s.replace(/\(([^)]*)\)/g, (full, inner) => {
+            const safe = inner
+                .replace(/\./g, "<p>")
+                .replace(/\!/g, "<e>")
+                .replace(/\?/g, "<q>");
+            return `(${safe})`;
+        });
+
+        // split on sentence end punctuation when followed by a new sentence start
+        let parts = s.split(/(?<=[.!?])\s+(?=[A-Z0-9(])/g);
+
+        // restore placeholders
+        parts = parts.map((x) =>
+            x
+                .replace(/<dot>/g, ".")
+                .replace(/<p>/g, ".")
+                .replace(/<e>/g, "!")
+                .replace(/<q>/g, "?")
+                .trim()
+        );
+
+        // merge parenthetical-only sentences back to previous step
+        const merged = [];
+        for (const p of parts) {
+            if (!p) continue;
+
+            // if this chunk starts with '(' it's probably a note: attach to previous
+            if (p.startsWith("(") && merged.length) {
+                merged[merged.length - 1] = `${
+                    merged[merged.length - 1]
+                } ${p}`.trim();
+            } else {
+                merged.push(p);
+            }
+        }
+
+        return merged.filter(Boolean);
+    }
+
     return (
-        <div className="recipe-detail-page container">
-            <div className="recipe-detail-header">
-                <div className="logo-stamp">
-                    <img
-                        src="/assets/logo/logo-stamp-transparent.png"
-                        alt="Logo Stamp"
-                    />
-                </div>
-                <div className="recipe-detail-image">
-                    <img src={recipe.public_image} alt={recipe.title} />
+        <>
+            <FlashMessage className="flash-screen" />
+            <div className="recipe-detail-page container">
+                <div className="recipe-detail-header">
+                    <div className="logo-stamp">
+                        <img
+                            src="/assets/logo/logo-stamp-transparent.png"
+                            alt="Logo Stamp"
+                        />
+                    </div>
+                    <div className="recipe-detail-image">
+                        <img src={recipe.public_image} alt={recipe.title} />
 
-                    <button
-                        className="btn btn-rounded recipe-detail-like-button"
-                        type="button"
-                        aria-label="Like recipe"
-                    >
-                        {liked ? (
-                            <i className="fa-solid fa-heart" />
-                        ) : (
-                            <i className="fa-regular fa-heart" />
-                        )}
-                        {liked ? "You liked this" : "Like this recipe"}
-                    </button>
-                </div>
-
-                <div className="recipe-detail-content-box">
-                    <h1 className="recipe-detail-title">{recipe.title}</h1>
-                    <p className="mt-05">
-                        {recipe.dietary_preferences.length > 0 &&
-                            recipe.dietary_preferences
-                                .map((d) => d.diet_name)
-                                .join(", ")}
-
-                        {recipe.dietary_preferences.length > 0 &&
-                            recipe.allergies.length > 0 && (
-                                <span className="color-primary ml-05 mr-05">
-                                    •
-                                </span>
-                            )}
-
-                        {recipe.allergies.length > 0 &&
-                            "Warning contains: " +
-                                recipe.allergies
-                                    .map((a) => a.allergy_name)
-                                    .join(", ")}
-                    </p>
-
-                    <div className="recipe-detail-infos">
-                        <div className="recipe-detail-info">
-                            <div className="recipe-detail-info-icon">
+                        <button
+                            className="btn btn-rounded recipe-detail-like-button"
+                            type="button"
+                            aria-label="Like recipe"
+                        >
+                            {liked ? (
                                 <i className="fa-solid fa-heart" />
+                            ) : (
+                                <i className="fa-regular fa-heart" />
+                            )}
+                            {liked ? "You liked this" : "Like this recipe"}
+                        </button>
+                    </div>
+
+                    <div className="recipe-detail-content-box">
+                        <h1 className="recipe-detail-title">{recipe.title}</h1>
+                        <p className="mt-05">
+                            {recipe.dietary_preferences.length > 0 &&
+                                recipe.dietary_preferences
+                                    .map((d) => d.diet_name)
+                                    .join(", ")}
+
+                            {recipe.dietary_preferences.length > 0 &&
+                                recipe.allergies.length > 0 && (
+                                    <span className="color-primary ml-05 mr-05">
+                                        •
+                                    </span>
+                                )}
+
+                            {recipe.allergies.length > 0 &&
+                                "Warning contains: " +
+                                    recipe.allergies
+                                        .map((a) => a.allergy_name)
+                                        .join(", ")}
+                        </p>
+
+                        <div className="recipe-detail-infos">
+                            <div className="recipe-detail-info">
+                                <div className="recipe-detail-info-icon">
+                                    <i className="fa-solid fa-heart" />
+                                </div>
+                                <div className="recipe-detail-info-text">
+                                    <p className="recipe-detail-info-label">
+                                        Favorites
+                                    </p>
+                                    <p className="recipe-detail-info-value">
+                                        {recipe.likes_count}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="recipe-detail-info-text">
-                                <p className="recipe-detail-info-label">
-                                    Favorites
-                                </p>
-                                <p className="recipe-detail-info-value">
-                                    {recipe.likes_count}
-                                </p>
+                            <div className="recipe-detail-info">
+                                <div className="recipe-detail-info-icon">
+                                    <i className="fa-regular fa-clock"></i>
+                                </div>
+                                <div className="recipe-detail-info-text">
+                                    <p className="recipe-detail-info-label">
+                                        Cooking Time
+                                    </p>
+                                    <p className="recipe-detail-info-value">
+                                        {recipe.cooking_time} mins
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                        <div className="recipe-detail-info">
-                            <div className="recipe-detail-info-icon">
-                                <i className="fa-regular fa-clock"></i>
-                            </div>
-                            <div className="recipe-detail-info-text">
-                                <p className="recipe-detail-info-label">
-                                    Cooking Time
-                                </p>
-                                <p className="recipe-detail-info-value">
-                                    {recipe.cooking_time} mins
-                                </p>
-                            </div>
-                        </div>
-                        <div className="recipe-detail-info">
-                            <div className="recipe-detail-info-icon">
-                                <i className="fa-solid fa-leaf"></i>
-                            </div>
-                            <div className="recipe-detail-info-text">
-                                <p className="recipe-detail-info-label">
-                                    Total Ingredients
-                                </p>
-                                <p className="recipe-detail-info-value">
-                                    {recipe.total_ingredient}
-                                </p>
+                            <div className="recipe-detail-info">
+                                <div className="recipe-detail-info-icon">
+                                    <i className="fa-solid fa-leaf"></i>
+                                </div>
+                                <div className="recipe-detail-info-text">
+                                    <p className="recipe-detail-info-label">
+                                        Total Ingredients
+                                    </p>
+                                    <p className="recipe-detail-info-value">
+                                        {recipe.total_ingredient}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="recipe-detail-nutrients recipe-detail-section">
-                <h3>Food Nutrients (Makro)</h3>
+                <div className="recipe-detail-nutrients recipe-detail-section">
+                    <h3>Food Nutrients (Makro)</h3>
 
-                <div className="recipe-detail-nutrient-cards">
-                    <div className="recipe-detail-nutrient-card">
-                        <div className="recipe-detail-nutrient-icon">
-                            <i className="fa-solid fa-fire-flame-curved"></i>
+                    <div className="recipe-detail-nutrient-cards">
+                        <div className="recipe-detail-nutrient-card">
+                            <div className="recipe-detail-nutrient-icon">
+                                <i className="fa-solid fa-fire-flame-curved"></i>
+                            </div>
+                            <h4>Calories</h4>
+                            <p>{recipe.calories} kcal</p>
                         </div>
-                        <h4>Calories</h4>
-                        <p>{recipe.calories} kcal</p>
-                    </div>
-                    <div className="recipe-detail-nutrient-card">
-                        <div className="recipe-detail-nutrient-icon">
-                            <i className="fa-solid fa-drumstick-bite" />
+                        <div className="recipe-detail-nutrient-card">
+                            <div className="recipe-detail-nutrient-icon">
+                                <i className="fa-solid fa-drumstick-bite" />
+                            </div>
+                            <h4>Protein</h4>
+                            <p>{recipe.protein} gr</p>
                         </div>
-                        <h4>Protein</h4>
-                        <p>{recipe.protein} gr</p>
-                    </div>
-                    <div className="recipe-detail-nutrient-card">
-                        <div className="recipe-detail-nutrient-icon">
-                            <i className="fa-solid fa-cookie"></i>
+                        <div className="recipe-detail-nutrient-card">
+                            <div className="recipe-detail-nutrient-icon">
+                                <i className="fa-solid fa-cookie"></i>
+                            </div>
+                            <h4>Fat</h4>
+                            <p>{recipe.fat} gr</p>
                         </div>
-                        <h4>Fat</h4>
-                        <p>{recipe.fat} gr</p>
-                    </div>
-                    <div className="recipe-detail-nutrient-card">
-                        <div className="recipe-detail-nutrient-icon">
-                            <i className="fa-solid fa-water"></i>
+                        <div className="recipe-detail-nutrient-card">
+                            <div className="recipe-detail-nutrient-icon">
+                                <i className="fa-solid fa-water"></i>
+                            </div>
+                            <h4>Sodium</h4>
+                            <p>{recipe.sodium} mg</p>
                         </div>
-                        <h4>Sodium</h4>
-                        <p>{recipe.sodium} mg</p>
                     </div>
                 </div>
-            </div>
 
-            <div className="recipe-detail-ingr-inst">
-                <div className="recipe-detail-ingredients recipe-detail-section">
-                    <h3>Measured Ingredients</h3>
-                    <ul>
-                        {splitIngredientsSmart(recipe.measured_ingredients).map(
-                            (ingr, index) => (
+                <div className="recipe-detail-ingr-inst">
+                    <div className="recipe-detail-ingredients recipe-detail-section">
+                        <h3>Measured Ingredients</h3>
+                        <ul>
+                            {splitIngredientsSmart(
+                                recipe.measured_ingredients
+                            ).map((ingr, index) => (
                                 <li key={index}>{ingr}</li>
-                            )
-                        )}
-                    </ul>
-                </div>
+                            ))}
+                        </ul>
+                    </div>
 
-                <div className="recipe-detail-instructions recipe-detail-section">
-                    <h3>Instructions</h3>
-                    {recipe.instructions.split(".").map(
-                        (r, index) =>
-                            r.trim() && (
+                    <div className="recipe-detail-instructions recipe-detail-section">
+                        <h3>Instructions</h3>
+                        {recipe.instructions}
+                        {splitInstructionsSmart(recipe.instructions).map(
+                            (step, index) => (
                                 <div className="mb-1" key={index}>
                                     <p className="color-primary medium">
                                         Step {index + 1}
                                     </p>
-                                    <p>{r.trim() + "."}</p>
+                                    <p>{step}</p>
                                 </div>
                             )
-                    )}
-                    <div className="recipe-detail-youtube">
-                        <h3>Video Tutorial</h3>
-                        <div className="recipe-detail-youtube-video">
-                            {yt.loading && <p>Loading video...</p>}
+                        )}
+                        <div className="recipe-detail-youtube">
+                            <h3>Video Tutorial</h3>
+                            <div className="recipe-detail-youtube-video">
+                                {yt.loading && <p>Loading video...</p>}
 
-                            {!yt.loading && yt.error && (
-                                <p className="error-text">{yt.error}</p>
-                            )}
+                                {!yt.loading && yt.error && (
+                                    <p className="error-text">{yt.error}</p>
+                                )}
 
-                            {!yt.loading && !yt.error && yt.embedUrl && (
-                                <iframe
-                                    width="100%"
-                                    height="500"
-                                    src={yt.embedUrl}
-                                    title="YouTube video player"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    allowFullScreen
-                                />
-                            )}
+                                {!yt.loading && !yt.error && yt.embedUrl && (
+                                    <iframe
+                                        width="100%"
+                                        height="500"
+                                        src={yt.embedUrl}
+                                        title="YouTube video player"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowFullScreen
+                                    />
+                                )}
 
-                            {!yt.loading && !yt.error && !yt.embedUrl && (
-                                <p>No video found for this recipe.</p>
-                            )}
+                                {!yt.loading && !yt.error && !yt.embedUrl && (
+                                    <p>No video found for this recipe.</p>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
