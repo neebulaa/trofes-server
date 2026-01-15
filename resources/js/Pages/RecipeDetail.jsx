@@ -3,8 +3,60 @@ import "../../css/RecipeDetail.css";
 import { useState, useEffect } from "react";
 import FlashMessage from "../Components/FlashMessage";
 
+function csrfToken() {
+    return document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute("content");
+}
+
 export default function RecipeDetail({ recipe, user }) {
-    const [liked, setLiked] = useState(true);
+    const [liked, setLiked] = useState(!!recipe.liked_by_me);
+    const [likesCount, setLikesCount] = useState(recipe.likes_count ?? 0);
+    const [busy, setBusy] = useState(false);
+
+    async function likeRecipe(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (busy) return;
+
+        const nextLiked = !liked;
+
+        setLiked(nextLiked);
+        setLikesCount((c) => c + (nextLiked ? 1 : -1));
+        setBusy(true);
+
+        try {
+            const res = await fetch(`/recipes/${recipe.slug}/like`, {
+                method: nextLiked ? "POST" : "DELETE",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Accept: "application/json",
+                    "X-CSRF-TOKEN": csrfToken(),
+                },
+            });
+
+            if (res.status === 401) {
+                throw new Error("Unauthenticated");
+            }
+
+            if (!res.ok) {
+                throw new Error("Request failed");
+            }
+
+            const json = await res.json();
+            setLiked(!!json.is_liked);
+            setLikesCount(json.likes_count ?? likesCount);
+        } catch (err) {
+            // rollback
+            setLiked(!nextLiked);
+            setLikesCount((c) => c + (nextLiked ? -1 : 1));
+            console.error(err);
+        } finally {
+            setBusy(false);
+        }
+    }
+
     const [yt, setYt] = useState({
         loading: true,
         embedUrl: null,
@@ -167,7 +219,9 @@ export default function RecipeDetail({ recipe, user }) {
                         <button
                             className="btn btn-rounded recipe-detail-like-button"
                             type="button"
-                            aria-label="Like recipe"
+                            onClick={likeRecipe}
+                            disabled={busy}
+                            aria-label={liked ? "Unlike recipe" : "Like recipe"}
                         >
                             {liked ? (
                                 <i className="fa-solid fa-heart" />
@@ -210,7 +264,7 @@ export default function RecipeDetail({ recipe, user }) {
                                         Favorites
                                     </p>
                                     <p className="recipe-detail-info-value">
-                                        {recipe.likes_count}
+                                        {likesCount}
                                     </p>
                                 </div>
                             </div>

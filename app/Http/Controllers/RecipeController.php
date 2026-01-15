@@ -154,7 +154,7 @@ class RecipeController extends Controller
 
         return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($likedRecipeIds, $limit) {
             try {
-                $response = Http::withoutVerifying()->timeout(2)
+                $response = Http::withoutVerifying()->timeout(5)
                     ->post('https://arnight-trofes-api.hf.space/recommend', [
                         'liked_ids' => $likedRecipeIds,
                         'top_k' => max(50, $limit * 2),
@@ -311,12 +311,22 @@ class RecipeController extends Controller
         ]);
     }
 
-    public function show(Recipe $recipe){
-        // load dietary preferences and allergies relationships
-        $recipe->load(['dietaryPreferences', 'allergies']);
+    public function show(Request $request, Recipe $recipe){
+        
+        $recipe
+            ->load(['dietaryPreferences', 'allergies'])
+            ->loadCount('likes');
+
+        if ($request->user()) {
+            $recipe->loadExists([
+                'likes as liked_by_me' => fn ($q) =>
+                    $q->where('user_id', $request->user()->user_id),
+            ]);
+        }
+
         return Inertia::render('RecipeDetail', [
             'recipe' => $recipe->loadCount('likes'),
-            'user' => Auth::user(),
+            'user' => $request->user(),
         ])->with('flash', [
             'type' => 'error',
             "message" => "This food contains allergens that you are sensitive to. Please be cautious when preparing or consuming this dish."
