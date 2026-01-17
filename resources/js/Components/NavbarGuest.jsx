@@ -36,7 +36,7 @@ export default function Navbar() {
     }, [open]);
 
     return (
-        <header>
+        <header id='guest-navbar'>
             <nav className={`container nav ${open ? "nav-open" : ""}`}>
                 <div className="logo">
                     <Link href="/">

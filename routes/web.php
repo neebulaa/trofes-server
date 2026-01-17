@@ -33,6 +33,12 @@ Route::get('/contact-us', function(){
     return Inertia::render('ContactUs');
 });
 
+Route::get('/nutrients-calculator', function(){
+    return Inertia::render('NutrientsCalculator', [
+        'recommended_recipes' => Recipe::inRandomOrder()->limit(5)->get(),
+    ]);
+})->name('nutrients-calculator');
+
 Route::middleware('auth')->group(function(){
 
     Route::middleware('onboarded')->group(function(){

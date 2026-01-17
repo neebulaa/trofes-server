@@ -39,6 +39,14 @@ export default function NavLinks({ url, handleNavigate }) {
             </Link>
 
             <Link
+                href="/nutrients-calculator"
+                className={isActive("/nutrients-calculator") ? "active" : ""}
+                onClick={handleNavigate}
+            >
+                Nutrients Calculator
+            </Link>
+
+            <Link
                 href="/contact-us"
                 className={isActive("/contact-us") ? "active" : ""}
                 onClick={handleNavigate}

@@ -1,4 +1,5 @@
 .recipe-detail-page {
+    overflow-x: hidden;
     margin: 0 auto;
     padding-block: 4rem;
 }

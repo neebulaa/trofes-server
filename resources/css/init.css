@@ -83,7 +83,6 @@ ol {
 }
 
 html {
-    overflow-x: hidden;
     scroll-behavior: smooth;
     font-size: calc(16px * var(--ui-scale));
 }
@@ -1018,20 +1017,27 @@ select:focus,
     font-size: 1rem;
     font-weight: 600;
     margin-top: 0.75rem;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
 }
 
 .recipe-card .recipe-info {
     margin-top: 0.5rem;
     display: flex;
-    gap: 1rem;
+    gap: .75rem;
     font-size: 0.85rem;
+    text-align: center;
     color: var(--neutral-600);
 }
 
 .recipe-card .recipe-info-list {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.15rem;
     flex-wrap: wrap;
     justify-content: center;
 }

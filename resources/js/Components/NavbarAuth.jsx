@@ -18,6 +18,7 @@ export default function NavbarAuth({ user }) {
         return window.innerWidth > 768 ? true : false;
     });
 
+    const lastWidthRef = useRef(window.innerWidth);
     const navRef = useRef(null);
     const hamburgerRef = useRef(null);
     const searchRef = useRef(null);
@@ -185,7 +186,7 @@ export default function NavbarAuth({ user }) {
                         className="custom-search-btn"
                     >
                         <i className="fa-brands fa-searchengin"></i>
-                        <p>Custom</p>
+                        <p>Custom Search</p>
                     </Link>
 
                     <ProfileDropdown user={user} />
