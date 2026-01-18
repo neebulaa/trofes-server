@@ -3,6 +3,7 @@
     width: 100%;
     position: relative;
     display: flex;
+    overflow: hidden;
     min-height: calc(100dvh - 80px); /* 80px is header height */
 }
 
