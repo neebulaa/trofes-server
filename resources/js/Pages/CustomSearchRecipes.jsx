@@ -111,10 +111,7 @@ export default function CustomSearchRecipes({allergies, dietary_preferences, use
             </h1>
             <p>
                 The custom search feature helps users find menu options that truly match
-                their needs. Users can filter food by nutritional values such as protein or
-                calories, adjust for allergies and dietary preferences, and choose menus
-                that fit the ingredients they already have. As a result, the search becomes
-                more personalized, faster, and more relevant.
+                their needs.
             </p>
             </div>
 

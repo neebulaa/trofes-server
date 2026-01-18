@@ -217,11 +217,16 @@ export default function Recipes({recipes, hero_recipes, recommended_recipes, rec
             </div>
 
             <div className="recipe-filters mt-3">
-                <Dropdown
-                    options={categoryOptions}
-                    value={category}
-                    onChange={setCategory}
-                />
+                <div className="filters-sort">
+                    <span className="filters-text">
+                        Filter by:
+                    </span>
+                    <Dropdown
+                        options={categoryOptions}
+                        value={category}
+                        onChange={setCategory}
+                    />
+                </div>
 
                 <div className="filter-pills">
                     {recipe_filter_options.map((pill) => {

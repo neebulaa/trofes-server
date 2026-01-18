@@ -1068,13 +1068,14 @@ select:focus,
 }
 
 .guide-card-title {
+    font-weight: 600;
     margin-top: 0.85rem;
-    font-size: 1.125rem;
+    font-size: 1rem;
 }
 
 .guide-card-excerpt {
     margin-top: 0.25rem;
-    font-size: 1rem;
+    font-size: .9rem;
     color: var(--muted);
 }
 

@@ -4,8 +4,8 @@
 
 .guides-page-title {
     text-align: center;
-    font-size: clamp(4rem, 10vw, 5rem);
-    font-weight: 600;
+    font-size: clamp(2.2rem, 10vw, 3rem);
+    font-weight: 700;
     margin-bottom: 1rem;
     line-height: 1.1;
 }
@@ -15,7 +15,7 @@
     font-size: 1rem;
     color: var(--muted);
     max-width: calc(800px * var(--ui-scale));
-    margin: 0 auto 3rem auto;
+    margin: 0 auto 2rem auto;
 }
 
 /* search bar (main design in init.css) */
@@ -48,7 +48,23 @@
     display: none;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 900px) {
+    .guides-page-title {
+        font-weight: 700;
+        text-align: left;
+        font-size: clamp(2rem, 4vw, 3rem);
+        line-height: initial;
+    }
+
+    .guides-page-about {
+        text-align: left;
+    }
+}
+
+@media (max-width: 760px) {
+    #guides-page {
+        padding-block: 3rem;
+    }
 
     .search-and-filters form {
         flex-direction: column;
@@ -60,7 +76,7 @@
 
     .filters p.filters-text {
         display: block;
-        margin-right: .5rem;
+        margin-right: 0.5rem;
         font-size: 0.95rem;
         color: var(--neutral-700);
     }

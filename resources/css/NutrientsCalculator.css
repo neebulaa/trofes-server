@@ -148,18 +148,18 @@
     flex: 1;
 }
 
-.input-group-identifier {
+.body-parameter.input-group-identifier {
     background: none;
     border: 1px solid var(--neutral-700);
 }
 
-.input-group-identifier:has(input:focus) {
+.body-parameter.input-group-identifier:has(input:focus) {
     outline: 1px solid var(--primary-700);
     background: var(--white);
     border: 1px solid var(--neutral-700);
 }
 
-.input-group-identifier .identifier {
+.body-parameter.input-group-identifier .identifier {
     padding: 0.5rem 0.675rem;
     background: var(--neutral-700);
     color: var(--white);
