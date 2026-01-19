@@ -97,105 +97,92 @@ class RecipeController extends Controller
         return $pillOptions;
     }
 
-    private function getAIRecommendation(array $likedRecipeIds, int $limit = 4){
-        if (empty($likedRecipeIds)) {
-            return Recipe::inRandomOrder()->limit($limit)->get();
-        }
-
-        try {
-            $response = Http::withoutVerifying()->timeout(10)->post('https://arnight-trofes-api.hf.space/recommend', [
-                'liked_ids' => $likedRecipeIds,
-                'top_k' => $limit,
-                'is_start_from_zero' => false 
-            ]);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                
-                $recommendedIds = $data['recommended_ids'] ?? [];
-
-                if (empty($recommendedIds)) {
-                    return Recipe::inRandomOrder()->limit($limit)->get();
-                }
-
-                $idsString = implode(',', $recommendedIds);
-                $recommended = Recipe::whereIn('recipe_id', $recommendedIds)
-                    ->orderByRaw("FIELD(recipe_id, $idsString)")
-                    ->get();
-                // dd($recommended);
-                return $recommended;
-            } else {
-                // Log error kalau mau debugging
-                Log::error('API Error: ' . $response->body());
-                dd("failed");
-            }
-
-        } catch (\Exception $e) {
-            // dd("haya failed");
-            // Kalau koneksi internet mati atau API down, jangan biarkan web crash
-            Log::error('Connection Error: ' . $e->getMessage());
-            dd($e->getMessage());
-        }
-
-        return Recipe::inRandomOrder()->limit($limit)->get();
-    }
-
     private function getAIRecommendationCached(array $likedRecipeIds, int $limit, ?int $userId)
     {
         if (empty($likedRecipeIds)) {
-            return Recipe::inRandomOrder()
-                ->limit($limit)
-                ->get();
+            return [
+                'data' => Recipe::inRandomOrder()->limit($limit)->get(),
+                'warning' => null
+            ];
         }
+        $user = Auth::user();
+        // Ambil ID alergi dan diet untuk dijadikan bagian dari Key Cache
+        $allergyHash = $user ? md5(json_encode($user->allergies->pluck('allergy_id')->sort()->toArray())): 'no-allergy';
+        $dietHash = $user ? md5(json_encode($user->dietaryPreferences->pluck('dietary_preference_id')->sort()->toArray())) : 'no-diet';
+        
+        $likeHash = md5(json_encode($likedRecipeIds));
+        $cacheKey = "ai_rec_v6:u={$userId}:l={$likeHash}:a={$allergyHash}:d={$dietHash}:lim={$limit}";
 
-        // cache key based on user + liked ids
-        $hash = md5(json_encode($likedRecipeIds));
-        $cacheKey = "ai_rec_fin:user={$userId}:h={$hash}:limit={$limit}";
-
-        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($likedRecipeIds, $limit) {
+        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($likedRecipeIds, $limit, $user) {
             try {
                 $response = Http::withoutVerifying()->timeout(5)
                     ->post('https://arnight-trofes-api.hf.space/recommend', [
                         'liked_ids' => $likedRecipeIds,
-                        'top_k' => max(50, $limit * 2),
+                        'top_k' => max(100, $limit * 2),
                         'is_start_from_zero' => false,
                     ]);
 
                 if (!$response->successful()) {
                     Log::warning('AI recommend failed', ['status' => $response->status()]);
-                    return collect(); // no cache of error response body
+                    throw new \Exception("AI API Down"); // Agar cache gak diisi random dan bakal coba lagi di refresh berikutnya
+                    // return collect(); // no cache of error response body
                 }
 
                 if($response->successful()){
                     $recommendedIds = $response->json('recommended_ids') ?? [];
-
+                    $filterStatus = 'none'; 
+                    // dd($recommendedIds);
                     if (empty($recommendedIds)) {
-                        return Recipe::inRandomOrder()->limit($limit)->get();
+                        return ['data' => Recipe::inRandomOrder()->limit($limit)->get(), 'warning' => null];
                     }
 
                     // 3. Mulai Hard Filtering (Logika Kode Awalmu)
-                    $query = Recipe::query()->whereIn('recipe_id', $recommendedIds);
+                    $baseQuery = Recipe::query()->whereIn('recipe_id', $recommendedIds);
 
-                    $user = Auth::user();
                     if ($user) {
                         // Filter Alergi
                         $userAllergyIds = $user->allergies->pluck('allergy_id')->toArray();
                         if (!empty($userAllergyIds)) {
-                            $query->whereDoesntHave('allergies', function ($q) use ($userAllergyIds) {
+                            $baseQuery->whereDoesntHave('allergies', function ($q) use ($userAllergyIds) {
                                 $q->whereIn('allergies.allergy_id', $userAllergyIds);
                             });
                         }
+                    }
 
-                        // Filter Diet
-                        $userDietIds = $user->dietaryPreferences->pluck('dietary_preference_id')->toArray();
-                        if (!empty($userDietIds)) {
-                            foreach ($userDietIds as $dietId) {
-                                $query->whereHas('dietaryPreferences', function ($q) use ($dietId) {
-                                    $q->where('dietary_preferences.dietary_preference_id', $dietId);
-                                });
+                    // Filter Diet
+                    $warningMessage = null;
+                    $userDietIds = $user ? $user->dietaryPreferences->pluck('dietary_preference_id')->toArray(): [];
+                    if (!empty($userDietIds)) {
+                        $perfectQuery = (clone $baseQuery);
+                        foreach($userDietIds as $dietId){
+                            $perfectQuery->whereHas('dietaryPreferences', fn($q) => $q->where('dietary_preferences.dietary_preference_id', $dietId));
+                        }
+                        if ($perfectQuery->count() > 0) {
+                            // dd("Perfect bre $perfectQuery");
+                            $query = $perfectQuery;
+                            $filterStatus = 'Perfect';
+                        } else {
+                            $partialQuery = (clone $baseQuery)->whereHas('dietaryPreferences', function ($q) use ($userDietIds) {
+                                $q->whereIn('dietary_preferences.dietary_preference_id', $userDietIds);
+                            });
+
+                            if ($partialQuery->count() > 0) {
+                                $query = $partialQuery;
+                                $warningMessage = "We couldn't find recipes matching ALL your diets, so we're showing some that match at least one.";
+                                $filterStatus = 'Partial';
+                            } else {
+                                $query = $baseQuery;
+                                $filterStatus = 'Random';
                             }
                         }
+                    }else{
+                        $query = $baseQuery;
+                        $filterStatus = 'Gak set diet';
+                        // dd("else bre $query");
                     }
+                        
+                    // $afterFilterCount = (clone $query)->count();
+                    // dd("DEBUG FILTER $filterStatus: Dari " . count($recommendedIds) . " resep AI, hanya $afterFilterCount yang lolos filter Diet/Alergi.");
 
                     // Ambil hasil sesuai urutan rekomendasi AI
                     $idsString = implode(',', $recommendedIds);
@@ -206,20 +193,42 @@ class RecipeController extends Controller
                     // 4. Fallback jika setelah difilter hasilnya kurang dari limit
                     if ($recommended->count() < $limit) {
                         $needed = $limit - $recommended->count();
-                        $extra = Recipe::whereNotIn('recipe_id', $recommended->pluck('recipe_id'))
-                                    ->inRandomOrder()
-                                    ->limit($needed)
-                                    ->get();
+                        // Buat query dasar untuk fallback yang tetap aman
+                        $fallbackQuery = Recipe::whereNotIn('recipe_id', $recommended->pluck('recipe_id'));
+                        if ($user) {
+                            // Tetap buang alergi di hasil random
+                            if (!empty($userAllergyIds)) {
+                                $fallbackQuery->whereDoesntHave('allergies', function ($q) use ($userAllergyIds) {
+                                    $q->whereIn('allergies.allergy_id', $userAllergyIds);
+                                });
+                            }
+                            // Tetap pastikan sesuai diet di hasil random
+                            if (!empty($userDietIds)) {
+                                foreach ($userDietIds as $dietId) {
+                                    $fallbackQuery->whereHas('dietaryPreferences', fn($q) => $q->where('dietary_preferences.dietary_preference_id', $dietId));
+                                }
+                            }
+                        }
+                        $extra = $fallbackQuery->inRandomOrder()->limit($needed)->get();
                         $recommended = $recommended->concat($extra);
                     }
 
-                    return $recommended;
+                    return [
+                        'data' => $recommended,
+                        'warning' => $warningMessage
+                    ];
                 }
             } catch (\Throwable $e) {
                 Log::warning('AI recommend exception', ['msg' => $e->getMessage()]);
-                return collect();
+                return [
+                    'data' => Recipe::inRandomOrder()->limit($limit)->get(),
+                    'warning' => null
+                ];
             }
-            return Recipe::inRandomOrder()->limit($limit)->get();
+            return [
+                'data' => Recipe::inRandomOrder()->limit($limit)->get(),
+                'warning' => null
+            ];
         });
     }
 
@@ -286,11 +295,15 @@ class RecipeController extends Controller
         }
 
         $hero_count = 5;
-        $recommended_count = 4;
+        $recommended_count = 12;
         $userId = $request->user()->user_id;
         $ai = $this->getAIRecommendationCached($userLikedIds, $hero_count + $recommended_count, $userId);
-        $hero = $ai->take($hero_count)->values();
-        $recommended = $ai->slice($hero_count, $recommended_count)->values();
+        
+        $aiRecipe = $ai['data'];
+        $warningMessage = $ai['warning'];
+
+        $hero = $aiRecipe->take($hero_count)->values();
+        $recommended = $aiRecipe->slice($hero_count, $recommended_count)->values();
 
         // fallback if AI empty
         if ($hero->isEmpty()) {
@@ -308,7 +321,10 @@ class RecipeController extends Controller
                 'type' => $filterType,
                 'id' => $filterId ? (int) $filterId : null,
             ],
-        ]);
+        ])->with('flash', $warningMessage ? [
+            'type' => 'warning',
+            'message' => $warningMessage
+        ] : null);
     }
 
     public function show(Request $request, Recipe $recipe){
@@ -316,21 +332,37 @@ class RecipeController extends Controller
         $recipe
             ->load(['dietaryPreferences', 'allergies'])
             ->loadCount('likes');
+        
+        $user = $request->user();
+        $hasAllergyWarning = false;
 
-        if ($request->user()) {
+        if ($user) {
             $recipe->loadExists([
                 'likes as liked_by_me' => fn ($q) =>
                     $q->where('user_id', $request->user()->user_id),
             ]);
+
+            // LOGIKA CEK ALERGI:
+            // Ambil ID alergi yang ada di resep ini
+            $recipeAllergyIds = $recipe->allergies->pluck('allergy_id')->toArray();
+            // Ambil ID alergi yang dimiliki user
+            $userAllergyIds = $user->allergies->pluck('allergy_id')->toArray();
+
+            // Cek apakah ada ID yang beririsan (match)
+            $intersect = array_intersect($recipeAllergyIds, $userAllergyIds);
+            
+            if (!empty($intersect)) {
+                $hasAllergyWarning = true;
+            }
         }
 
         return Inertia::render('RecipeDetail', [
-            'recipe' => $recipe->loadCount('likes'),
-            'user' => $request->user(),
-        ])->with('flash', [
+            'recipe' => $recipe, // loadCount sudah dilakukan di awal
+            'user' => $user,
+        ])->with('flash', $hasAllergyWarning ? [
             'type' => 'error',
-            "message" => "This food contains allergens that you are sensitive to. Please be cautious when preparing or consuming this dish."
-        ]);
+            'message' => "This food contains allergens that you are sensitive to. Please be cautious when preparing or consuming this dish."
+        ] : null);
     }
 
     public function customSearchRecipes(Request $request){
