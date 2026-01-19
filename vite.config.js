@@ -13,13 +13,13 @@ export default defineConfig({
         tailwindcss(),
         react(),
     ],
-    server: {
-        host: true,
-        port: 5173,
-        strictPort: true,
-        hmr: {
-            host: "174.139.115.40",
-            port: 5173,
-        },
-    },
+    // server: {
+    //     host: true,
+    //     port: 5173,
+    //     strictPort: true,
+    //     hmr: {
+    //         host: "174.139.115.40",
+    //         port: 5173,
+    //     },
+    // },
 });

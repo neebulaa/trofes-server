@@ -136,7 +136,8 @@
     .gender-choice:has(input[type="radio"]:checked)
     .gender-selection {
     opacity: 1;
-    background: var(--neutral-700);
+    background: var(--white);
+    color: var(--neutral-700);
 }
 
 .body-parameters-inputs {
@@ -148,18 +149,20 @@
     flex: 1;
 }
 
-.body-parameter.input-group-identifier {
+.body-parameter .input-group-identifier {
     background: none;
     border: 1px solid var(--neutral-700);
+    height: max-content;
+    align-items: stretch;
 }
 
-.body-parameter.input-group-identifier:has(input:focus) {
-    outline: 1px solid var(--primary-700);
+.body-parameter .input-group-identifier:has(input:focus) {
+    outline: none;
     background: var(--white);
     border: 1px solid var(--neutral-700);
 }
 
-.body-parameter.input-group-identifier .identifier {
+.body-parameter .input-group-identifier .identifier {
     padding: 0.5rem 0.675rem;
     background: var(--neutral-700);
     color: var(--white);
@@ -167,13 +170,13 @@
 }
 
 .body-parameters-inputs input {
-    background: none;
+    background: var(--white);
     padding: 0.5rem 0.675rem;
     color: var(--neutral-700);
 }
 
 .body-parameters-inputs input:focus {
-    outline: 1px solid var(--primary-700);
+    outline: none;
     border: none;
     background: var(--white);
 }
@@ -309,6 +312,13 @@
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
+}
+
+.calculator .error-text {
+    display: block;
+    margin-top: .5rem;
+    font-weight: 500;
+    color: var(--danger-300);
 }
 
 /* nutrients right */

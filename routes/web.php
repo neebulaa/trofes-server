@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\LikeRecipeController;
 use App\Http\Controllers\DashboardGuideController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\DashboardAllergyController;
+use App\Http\Controllers\NutrientsCalculatorController;
 use App\Http\Controllers\DashboardDietaryPreferenceController;
 
 // Route::get('/', function () {
@@ -33,11 +34,7 @@ Route::get('/contact-us', function(){
     return Inertia::render('ContactUs');
 });
 
-Route::get('/nutrients-calculator', function(){
-    return Inertia::render('NutrientsCalculator', [
-        'recommended_recipes' => Recipe::inRandomOrder()->limit(5)->get(),
-    ]);
-})->name('nutrients-calculator');
+Route::get('/nutrients-calculator', [NutrientsCalculatorController::class, 'index'])->name('nutrients-calculator');
 
 Route::middleware('auth')->group(function(){
 
