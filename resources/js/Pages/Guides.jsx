@@ -72,7 +72,7 @@ export default function Guides({ guides, filters }) {
                 </h1>
 
                 <p className="guides-page-about">
-                    Temukan berbagai tutorial yang telah kami siapkan untuk membantu Anda memahami setiap langkah dengan lebih mudah.
+                    Discover various tutorials prepared to assist you in understanding each step more effectively.
                 </p>
 
                 <div className="search-and-filters">
