@@ -47,7 +47,7 @@
 #hero .hero-sub {
     font-size: clamp(1rem, 2vw, 1.125rem);
     text-align: center;
-    max-width: calc(900px * var(--ui-scale));
+    max-width: calc(728px * var(--ui-scale));
     margin: 1rem auto;
     color: var(--text);
     opacity: 0;
@@ -249,7 +249,7 @@
     font-size: clamp(2.2rem, 4vw, 3rem);
     font-weight: 600;
     margin-bottom:calc(8px * var(--ui-scale));
-    max-width: 200px;
+    max-width: 350px;
 }
 
 .guides-head {
@@ -264,7 +264,7 @@
 .guides-scribble {
     position: absolute;
     top: 0;
-    translate: 0 -50%;
+    translate: 80% -40%;
     left: min(20vw, 180px) ;
     width: calc(120px * var(--ui-scale));
 }

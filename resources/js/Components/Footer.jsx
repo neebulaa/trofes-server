@@ -13,9 +13,7 @@ export default function Footer() {
                 </div>
                 <h3 className="footer-title">Trofes</h3>
                 <p className="footer-sub">
-                    Temukan rekomendasi makanan yang paling cocok untuk
-                    kebutuhan gizi Anda lebih mudah, lebih tepat, bersama
-                    Trofes.
+                    Achieve your nutritional goals with ease and accuracy through the personalized dietary recommendations provided by Trofes.
                 </p>
 
                 <div className="socials">
