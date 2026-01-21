@@ -46,7 +46,7 @@ export default function Allergies({ allergies }) {
                 <table className="crud-table">
                     <thead>
                             <tr>
-                                <th>Image</th>
+                                <th className="no-min-width">Image</th>
                                 <th>Name</th>
                                 <th>Examples</th>
                                 <th>Actions</th>
@@ -57,7 +57,7 @@ export default function Allergies({ allergies }) {
 
                     {allergies.data.map((allergy) => (
                         <tr key={allergy.allergy_code}>
-                            <td>
+                            <td className="no-min-width">
                                 <div className="crud-image crud-image-contain">
                                     <img
                                         src={allergy.public_image}

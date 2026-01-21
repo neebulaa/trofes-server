@@ -5,7 +5,7 @@ import NavbarDashboard from "../Components/Dashboard/NavbarDashboard";
 import "../../css/init.css";
 import "../../css/Dashboard/Dashboard.css";
 
-export default function DashboardLayout({ children, title = "Dashboard" }) {
+export default function DashboardLayout({ children, title = "Dashboard", id="" }) {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [sidebarMobileOpen, setSidebarMobileOpen] = useState(false);
     const { url, props } = usePage();
@@ -68,7 +68,7 @@ export default function DashboardLayout({ children, title = "Dashboard" }) {
                     onCloseMobile={() => setSidebarMobileOpen(false)}
                 />
 
-                <div className="dash-main">
+                <div className="dash-main" id={id}>
                     <NavbarDashboard
                         user={user}
                         title={title}

@@ -46,7 +46,7 @@ export default function DietaryPreferences({ dietary_preferences }) {
                 <table className="crud-table">
                     <thead>
                             <tr>
-                                <th>Image</th>
+                                <th className="no-min-width">Image</th>
                                 <th>Name</th>
                                 <th>Description</th>
                                 <th>Actions</th>
@@ -57,7 +57,7 @@ export default function DietaryPreferences({ dietary_preferences }) {
 
                     {dietary_preferences.data.map((dietary_preference) => (
                         <tr key={dietary_preference.diet_code}>
-                            <td>
+                            <td className="no-min-width">
                                 <div className="crud-image crud-image-contain">
                                     <img
                                         src={dietary_preference.public_image}

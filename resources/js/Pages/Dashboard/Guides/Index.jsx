@@ -46,7 +46,7 @@ export default function Guides({ guides }) {
                 <table className="crud-table">
                     <thead>
                             <tr>
-                                <th>Image</th>
+                                <th className="no-min-width">Image</th>
                                 <th>Title</th>
                                 <th>Published</th>
                                 <th>Actions</th>
@@ -57,7 +57,7 @@ export default function Guides({ guides }) {
 
                     {guides.data.map((guide) => (
                         <tr key={guide.guide_id}>
-                            <td>
+                            <td className="no-min-width">
                                 <div className="crud-image crud-image-wide">
                                     <img
                                         src={guide.public_image}

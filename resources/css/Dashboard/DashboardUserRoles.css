@@ -1,0 +1,9 @@
+#user-roles .crud-card-table {
+    max-height: 400px ;
+    overflow-y: auto;
+}
+
+#user-roles .crud-card-table thead {
+    position: sticky;
+    top: 0;
+} 
