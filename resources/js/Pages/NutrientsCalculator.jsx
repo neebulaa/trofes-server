@@ -6,7 +6,7 @@ import RecipeCard from "../Components/RecipeCard";
 
 export default function NutrientsCalculator({ recommended_recipes, user_age }) {
     const { data, setData, post, processing, errors } = useForm({
-        activity_level: "MIDDLE",
+        activity_level: "MIDDLE", // LOW | MIDDLE | HIGH | VERY HIGH
         gender: "male",
         age: user_age || "",
         weight: "",
@@ -22,12 +22,6 @@ export default function NutrientsCalculator({ recommended_recipes, user_age }) {
         fat_pct: null,
     });
 
-    const [inputErrors, setInputErrors] = useState({
-        age: { status: false, message: "Age is required" },
-        weight: { status: false, message: "Weight is required" },
-        height: { status: false, message: "Height is required" },
-    });
-
     const { props } = usePage();
     const {
         auth: { user },
@@ -40,25 +34,29 @@ export default function NutrientsCalculator({ recommended_recipes, user_age }) {
             id: "low",
             label: "Low",
             value: "LOW",
-            description: "Mostly sedentary lifestyle with little to no physical activity (e.g., desk or office job).",
+            description:
+                "Mostly sedentary lifestyle with little to no physical activity (e.g., desk or office job).",
         },
         {
             id: "middle",
             label: "Middle",
             value: "MIDDLE",
-            description: "Moderately active lifestyle with regular exercise 3-5 days per week or light physical work.",
+            description:
+                "Moderately active lifestyle with regular exercise 3-5 days per week or light physical work.",
         },
         {
             id: "high",
             label: "High",
             value: "HIGH",
-            description: "Active lifestyle with intense exercise or training 6-7 days per week.",
+            description:
+                "Active lifestyle with intense exercise or training 6-7 days per week.",
         },
         {
             id: "very-high",
             label: "Very High",
             value: "VERY HIGH",
-            description: "Very active lifestyle involving daily intense exercise or a physically demanding job (e.g., athletes or manual labor).",
+            description:
+                "Very active lifestyle involving daily intense exercise or a physically demanding job (e.g., athletes or manual labor).",
         },
     ];
 
@@ -139,61 +137,32 @@ export default function NutrientsCalculator({ recommended_recipes, user_age }) {
         };
     }
 
-    function validateInputs() {
-        const next = {
-            age: {
-                ...inputErrors.age,
-                status: data.age === "" || data.age === null,
-            },
-            weight: {
-                ...inputErrors.weight,
-                status: data.weight === "" || data.weight === null,
-            },
-            height: {
-                ...inputErrors.height,
-                status: data.height === "" || data.height === null,
-            },
-        };
-
-        setInputErrors(next);
-
-        return !next.age.status && !next.weight.status && !next.height.status;
-    }
-
     function handleSubmit(e) {
         e.preventDefault();
-
-        if (!validateInputs()) return;
 
         const t = calcTargets(data);
         if (!t) return;
 
-        setData((prev) => ({
-            ...prev,
+        setData({
+            ...data,
             ...t,
-        }));
+        });
 
-        setCalculated(true);
+        post("/nutrients-calculator", {
+            preserveScroll: true,
+            transform: (formData) => ({
+                ...formData,
+                ...t,
+            }),
+            onSuccess: () => {
+                setCalculated(true);
+            }
+            // preserveState: true
+        });
 
-        // import: setData updates state; to guarantee backend receives computed values,
-        // pass them directly here.
-        // post("", {
-        //     data: {
-        //         ...data,
-        //         ...t,
-        //     },
-        //     preserveScroll: true,
-        // });
     }
 
     function resetForm() {
-        // setCalculated(false);
-        setInputErrors({
-            age: { status: false, message: "Age is required" },
-            weight: { status: false, message: "Weight is required" },
-            height: { status: false, message: "Height is required" },
-        });
-
         setData({
             activity_level: "MIDDLE",
             gender: "male",
@@ -307,18 +276,11 @@ export default function NutrientsCalculator({ recommended_recipes, user_age }) {
                                                         "age",
                                                         e.target.value,
                                                     );
-                                                    setInputErrors((prev) => ({
-                                                        ...prev,
-                                                        age: {
-                                                            ...prev.age,
-                                                            status: false,
-                                                        },
-                                                    }));
                                                 }}
                                             />
-                                            {inputErrors.age.status && (
+                                            {errors.age && (
                                                 <span className="error-text">
-                                                    {inputErrors.age.message}
+                                                    {errors.age}
                                                 </span>
                                             )}
                                         </div>
@@ -338,24 +300,15 @@ export default function NutrientsCalculator({ recommended_recipes, user_age }) {
                                                             "weight",
                                                             e.target.value,
                                                         );
-                                                        setInputErrors(
-                                                            (prev) => ({
-                                                                ...prev,
-                                                                weight: {
-                                                                    ...prev.weight,
-                                                                    status: false,
-                                                                },
-                                                            }),
-                                                        );
                                                     }}
                                                 />
                                                 <span className="identifier">
                                                     kg
                                                 </span>
                                             </div>
-                                            {inputErrors.weight.status && (
+                                            {errors.weight && (
                                                 <span className="error-text">
-                                                    {inputErrors.weight.message}
+                                                    {errors.weight}
                                                 </span>
                                             )}
                                         </div>
@@ -375,25 +328,16 @@ export default function NutrientsCalculator({ recommended_recipes, user_age }) {
                                                             "height",
                                                             e.target.value,
                                                         );
-                                                        setInputErrors(
-                                                            (prev) => ({
-                                                                ...prev,
-                                                                height: {
-                                                                    ...prev.height,
-                                                                    status: false,
-                                                                },
-                                                            }),
-                                                        );
                                                     }}
                                                 />
                                                 <span className="identifier">
                                                     cm
                                                 </span>
                                             </div>
-                                            {inputErrors.height.status && (
-                                                <span className="error-text">
-                                                    {inputErrors.height.message}
-                                                </span>
+                                            {errors.height && (
+                                                <small className="error-text">
+                                                    {errors.height}
+                                                </small>
                                             )}
                                         </div>
                                     </div>
@@ -403,6 +347,11 @@ export default function NutrientsCalculator({ recommended_recipes, user_age }) {
                                     <h2 className="subsection-title">
                                         Activity Level
                                     </h2>
+                                    {errors.activity_level && (
+                                        <small className="error-text mb-05">
+                                            {errors.activity_level}
+                                        </small>
+                                    )}
                                     <p>
                                         <span style={{ fontWeight: "500" }}>
                                             {
@@ -570,6 +519,12 @@ export default function NutrientsCalculator({ recommended_recipes, user_age }) {
                                 <h2 className="subsection-title">
                                     Adjust according to your goals
                                 </h2>
+                                {errors.goal && (
+                                    <small className="error-text mb-05">
+                                        {errors.goal}
+                                    </small>
+                                )}
+
                                 <div className="calculator-goals-buttons">
                                     <button
                                         type="button"
@@ -641,7 +596,7 @@ export default function NutrientsCalculator({ recommended_recipes, user_age }) {
                                             {recommended_recipes.map(
                                                 (recipe) => (
                                                     <RecipeCard
-                                                        key={recipe.id}
+                                                        key={recipe.recipe_id}
                                                         recipe={recipe}
                                                     />
                                                 ),

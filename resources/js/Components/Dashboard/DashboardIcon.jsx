@@ -10,7 +10,8 @@ export default function Icon ({ name }) {
         menu: <i className="fa-solid fa-bars" aria-hidden="true" />,
         close: <i className="fa-solid fa-xmark" aria-hidden="true" />,
         allergies: <i className="fa-solid fa-shrimp"></i>,
-        diet: <i className="fa-regular fa-lemon"></i>
+        diet: <i className="fa-regular fa-lemon"></i>,
+        roles: <i className="fa-regular fa-address-card"></i>
     };
 
     return (

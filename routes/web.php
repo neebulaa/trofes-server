@@ -17,6 +17,7 @@ use App\Http\Controllers\DashboardGuideController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\DashboardAllergyController;
 use App\Http\Controllers\NutrientsCalculatorController;
+use App\Http\Controllers\DashboardRoleManagementController;
 use App\Http\Controllers\DashboardDietaryPreferenceController;
 
 // Route::get('/', function () {
@@ -35,6 +36,7 @@ Route::get('/contact-us', function(){
 });
 
 Route::get('/nutrients-calculator', [NutrientsCalculatorController::class, 'index'])->name('nutrients-calculator');
+Route::post('/nutrients-calculator', [NutrientsCalculatorController::class, 'findRecommendation']);
 
 Route::middleware('auth')->group(function(){
 
@@ -98,6 +100,10 @@ Route::middleware('auth')->group(function(){
         Route::get("/dashboard/dietary-preferences/{dietary_preference}/edit", [DashboardDietaryPreferenceController::class, 'edit']);
         Route::put("/dashboard/dietary-preferences/{dietary_preference}", [DashboardDietaryPreferenceController::class, 'update']);
         Route::delete("/dashboard/dietary-preferences/{dietary_preference}", [DashboardDietaryPreferenceController::class, 'destroy']);
+
+        // role management
+        Route::get('/dashboard/roles', [DashboardRoleManagementController::class, 'index']);
+        Route::post('/dashboard/roles/assign', [DashboardRoleManagementController::class, 'assign']);
     });
 
     // youtube search

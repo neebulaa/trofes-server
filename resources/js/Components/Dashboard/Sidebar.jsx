@@ -14,9 +14,16 @@ export default function Sidebar({ collapsed, mobileOpen, onToggleCollapsed, onCl
 
     const mainNavItems = useMemo(() => [
         { type: "link", label: "Home", href: "/dashboard", icon: "home" },
+        // { type: "group", title: "Users", href: "/users", icon: "home", 
+        //     items: [
+        //         { type: "link", label: "Admin", href: "/dashboard/users", icon: "guides" },
+        //     ],
+        //     defaultOpen: true,
+        // },
         { type: "link", label: "Guides", href: "/dashboard/guides", icon: "guides" },
         { type: "link", label: "Allergies", href: "/dashboard/allergies", icon: "allergies" },
         { type: "link", label: "Dietary", href: "/dashboard/dietary-preferences", icon: "diet" },
+        { type: "link", label: "Roles", href: "/dashboard/roles", icon: "roles" },
     ], []);
 
     return (
