@@ -22,7 +22,7 @@ class NutrientsCalculatorController extends Controller
     }
 
     private function getCustomAIRecommendation(){
-    
+        return [];
     }
 
     public function findRecommendation(Request $request){
