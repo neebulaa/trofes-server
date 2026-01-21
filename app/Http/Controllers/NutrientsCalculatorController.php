@@ -17,7 +17,6 @@ class NutrientsCalculatorController extends Controller
         }
 
         return Inertia::render('NutrientsCalculator', [
-            'recommended_recipes' => Recipe::inRandomOrder()->limit(5)->get(),
             "user_age" => $user_age,
         ]);
     }
@@ -42,7 +41,7 @@ class NutrientsCalculatorController extends Controller
         $height = $data['height'];
         $activity_level = $data['activity_level'];
         $goal = $data['goal'];
-        
+
         $calories = $request->calories ?? null;
         $carbs_g = $request->carbs_g ?? null;
         $protein_g = $request->protein_g ?? null;
@@ -58,14 +57,23 @@ class NutrientsCalculatorController extends Controller
         $user = null;
         if($is_login) {
             $user = auth()->user();
-            $allergies = $user->allergies()->pluck('allergy_id')->toArray();
-            $dietary_preferences = $user->dietaryPreferences()->pluck('dietary_preference_id')->toArray();
+            $allergies = $user->allergies()->pluck('allergies.allergy_id')->toArray();
+            $dietary_preferences = $user->dietaryPreferences()->pluck('dietary_preferences.dietary_preference_id')->toArray();
         }
 
         $recommended_recipes = $this->getCustomAIRecommendation();
 
-        if(empty($recommended_recipes)){
-            $recommended_recipes = Recipe::inRandomOrder()->limit(5)->get();
+        if ($recommended_recipes != null) {
+            $recommended_recipes = Recipe::query()
+                ->withCount('likes')
+                ->when($is_login, function ($q) {
+                    $q->withExists([
+                        'likes as liked_by_me' => fn ($qq) => $qq->where('user_id', auth()->id()),
+                    ]);
+                })
+                ->inRandomOrder()
+                ->limit(5)
+                ->get();
         }
 
         // return the same page with the validated data

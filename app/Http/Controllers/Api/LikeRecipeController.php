@@ -19,7 +19,7 @@ class LikeRecipeController extends Controller
 
         return response()->json([
             'is_liked' => true,
-            'likes_count' => $recipe->likes()->count(),
+            'likes_count' => $recipe->withCount('likes')->likes_count,
         ]);
     }
 
@@ -31,7 +31,7 @@ class LikeRecipeController extends Controller
 
         return response()->json([
             'is_liked' => false,
-            'likes_count' => $recipe->likes()->count(),
+            'likes_count' => $recipe->withCount('likes')->likes_count,
         ]);
     }
 }
