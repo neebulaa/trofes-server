@@ -7,6 +7,7 @@ export default function CustomDatalist({
     onChange,
     placeholder = "Search...",
     className,
+    useCamera = false,
 }) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
@@ -28,7 +29,7 @@ export default function CustomDatalist({
     const filteredOptions = options.filter(
         (opt) =>
             opt.label.toLowerCase().includes(query.toLowerCase()) &&
-            !value.some((v) => v.value === opt.value)
+            !value.some((v) => v.value === opt.value),
     );
 
     function handleSelect(option) {
@@ -55,7 +56,7 @@ export default function CustomDatalist({
 
     function handleRemoveAll() {
         const confirmation = confirm(
-            "Are you sure you want to remove all selected items?"
+            "Are you sure you want to remove all selected items?",
         );
         if (confirmation) {
             onChange([]);
@@ -70,17 +71,36 @@ export default function CustomDatalist({
             {label && <label>{label}</label>}
 
             <div className="datalist-input">
-                <input
-                    type="text"
-                    value={query}
-                    placeholder={placeholder}
-                    onFocus={() => setOpen(true)}
-                    onChange={(e) => {
-                        setQuery(e.target.value);
-                        setOpen(true);
-                    }}
-                    onKeyDown={handleKeyDown}
-                />
+                {!useCamera && (
+                    <input
+                        type="text"
+                        value={query}
+                        placeholder={placeholder}
+                        onFocus={() => setOpen(true)}
+                        onChange={(e) => {
+                            setQuery(e.target.value);
+                            setOpen(true);
+                        }}
+                        onKeyDown={handleKeyDown}
+                    />
+                )}
+
+                {useCamera && (
+                    <div className="input-group-identifier">
+                        <input
+                            type="text"
+                            value={query}
+                            placeholder={placeholder}
+                            onFocus={() => setOpen(true)}
+                            onChange={(e) => {
+                                setQuery(e.target.value);
+                                setOpen(true);
+                            }}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <span className="identifier">Camera</span>
+                    </div>
+                )}
 
                 {/* Selected items */}
                 {value.length > 0 && (
@@ -98,6 +118,7 @@ export default function CustomDatalist({
                         ))}
                     </div>
                 )}
+
                 {value.length > 0 && (
                     <p
                         className="remove-all-btn mt-1"

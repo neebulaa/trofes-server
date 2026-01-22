@@ -250,6 +250,36 @@ select:focus,
     border-left: 1px solid var(--neutral-500);
 }
 
+.datalist-input .input-group-identifier {
+    border: none;
+}
+
+.datalist-input:has(.input-group-identifier) {
+    padding: 0;
+}
+
+.datalist-input:has(.input-group-identifier + .list-items)
+    .input-group-identifier {
+    border-bottom: 1px solid var(--neutral-500);
+    border-radius: 6px 6px 0 0;
+}
+
+.datalist-input:has(.input-group-identifier) .list-items {
+    padding: 0 0.875rem;
+}
+
+.datalist-input:has(.input-group-identifier) .remove-all-btn {
+    padding: 0 0.875rem 0.75rem;
+}
+
+.input-sm .datalist-input:has(.input-group-identifier) .list-items {
+    padding: 0 0.625rem !important;
+}
+
+.input-sm .datalist-input:has(.input-group-identifier) .remove-all-btn {
+    padding: 0 0.875rem 0.5rem !important;
+}
+
 /* custom file input */
 .file-input-hidden {
     position: absolute;
@@ -707,6 +737,10 @@ select:focus,
     transition: 0.2s ease;
     z-index: 1000;
     padding: 0.85rem;
+}
+
+.dropdown-menu.open {
+    opacity: 1;
 }
 
 .profile-dropdown .dropdown-menu {
