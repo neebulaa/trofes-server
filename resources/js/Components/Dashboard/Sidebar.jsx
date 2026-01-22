@@ -20,6 +20,7 @@ export default function Sidebar({ collapsed, mobileOpen, onToggleCollapsed, onCl
         //     ],
         //     defaultOpen: true,
         // },
+        { type: "link", label: "Message", href: "/dashboard/messages", icon: "messages" },
         { type: "link", label: "Guides", href: "/dashboard/guides", icon: "guides" },
         { type: "link", label: "Allergies", href: "/dashboard/allergies", icon: "allergies" },
         { type: "link", label: "Dietary", href: "/dashboard/dietary-preferences", icon: "diet" },

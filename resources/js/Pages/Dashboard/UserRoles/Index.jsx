@@ -135,6 +135,9 @@ export default function UserRoles({ users, filters }) {
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search users..."
                 />
+                <button type="button" className="search-btn">
+                    Search
+                </button>
             </div>
 
             {items.length === 0 && (
