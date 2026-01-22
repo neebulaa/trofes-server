@@ -39,7 +39,7 @@ export default function Sidebar({ collapsed, mobileOpen, onToggleCollapsed, onCl
         <div className="dash-sidebarTop">
             <Link href="/">
                 <div className="dash-brand">
-                    <div className="dash-brand-logo logo">
+                    <div className="dash-brand-logo">
                         <img src="/assets/logo/logo-transparent.png" alt="Trofes Logo Dashboard" />
                     </div>
 

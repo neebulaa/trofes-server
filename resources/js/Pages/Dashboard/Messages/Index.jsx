@@ -8,6 +8,9 @@ import { router } from "@inertiajs/react";
 
 export default function Messages({ messages }) {
     const { delete: destroy } = useForm();
+    const { data, setData, get, errors } = useForm({
+        search: "",
+    });
 
     function deleteMessage(e, message_id) {
         e.preventDefault();
@@ -17,6 +20,16 @@ export default function Messages({ messages }) {
                 preserveScroll: true,
             });
         }
+    }
+
+    function handleSubmit(e) {
+        e.preventDefault();
+        get("/dashboard/messages", {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+            data: { search: data.search },
+        });
     }
 
     return (
@@ -29,6 +42,26 @@ export default function Messages({ messages }) {
             </div>
 
             <FlashMessage className="mt-1" />
+
+            <form onSubmit={handleSubmit}>
+                <div className="search-input mt-1">
+                    <span>
+                        <i className="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input
+                        type="text"
+                        value={data.search}
+                        onChange={(e) => setData("search", e.target.value)}
+                        placeholder="Search messages..."
+                        />
+                    <button
+                        type="submit"
+                        className="search-btn"
+                    >
+                        Search
+                    </button>
+                </div>
+            </form>
 
             {messages.data.length === 0 && (
                 <NotFoundSection

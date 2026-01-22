@@ -68,6 +68,12 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
+    transition: transform 0.2s ease;
+}
+
+.dash-brand-logo:hover img {
+    transform: scale(1.05);
+    rotate: -3deg;
 }
 
 .dash-brand-text {
