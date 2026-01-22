@@ -17,21 +17,24 @@ class LikeRecipeController extends Controller
             $recipe->getKey() => ['liked_at' => now()],
         ]);
 
+        $recipe->loadCount('likes');
+        
         return response()->json([
             'is_liked' => true,
-            'likes_count' => $recipe->withCount('likes')->likes_count,
+            'likes_count' => $recipe->likes_count,
         ]);
     }
 
     public function destroy(Request $request, Recipe $recipe)
     {
         $user = $request->user();
-
+        
         $user->likedRecipes()->detach($recipe->getKey());
+        $recipe->loadCount('likes');
 
         return response()->json([
             'is_liked' => false,
-            'likes_count' => $recipe->withCount('likes')->likes_count,
+            'likes_count' => $recipe->likes_count,
         ]);
     }
 }
