@@ -1,8 +1,9 @@
 import Layout from "../Layouts/Layout";
 import "../../css/CustomSearchRecipes.css";
 import CustomDatalist from "../Components/CustomDatalist";
-import { useState } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useForm } from "@inertiajs/react";
+import CameraCaptureModal from "../Components/CameraCaptureModal";
 
 export default function CustomSearchRecipes({
     allergies,
@@ -43,6 +44,21 @@ export default function CustomSearchRecipes({
         );
 
     const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const [cameraMenuOpen, setCameraMenuOpen] = useState(false);
+    const [showIngredientsCamera, setShowIngredientsCamera] = useState(false);
+    const [isInferencing, setIsInferencing] = useState(false);
+
+    const fileInputRef = useRef(null);
+    const cameraInputRef = useRef(null);
+
+    const ingredientLookup = useMemo(() => {
+        return new Map(
+            (ingredients || []).map((i) => [
+                i.ingredient_name.toLowerCase(),
+                i,
+            ]),
+        );
+    }, [ingredients]);
 
     function handleIngredientsChange(newValues) {
         setSelectedIngredients(newValues);
@@ -110,6 +126,105 @@ export default function CustomSearchRecipes({
             fat: "",
             sodium: "",
         }));
+    }
+
+    function canUseCamera() {
+        return (
+            typeof navigator !== "undefined" &&
+            navigator.mediaDevices &&
+            navigator.mediaDevices.getUserMedia
+        );
+    }
+
+    async function detectIngredientsFromImage(file) {
+        if (!file) return;
+
+        setIsInferencing(true);
+
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const response = await fetch(
+                "https://bagusarya-trofes-ingredients-detection.hf.space/detect",
+                {
+                    method: "POST",
+                    body: formData,
+                },
+            );
+
+            if (!response.ok) return;
+
+            const data = await response.json();
+
+            if (data.status !== "success" || !Array.isArray(data.ingredients)) {
+                return;
+            }
+
+            const selectedIds = new Set(
+                selectedIngredients.map((item) => item.value),
+            );
+
+            const newSelections = data.ingredients
+                .map((name) =>
+                    ingredientLookup.get(String(name).toLowerCase().trim()),
+                )
+                .filter(Boolean)
+                .filter((item) => !selectedIds.has(item.ingredient_id))
+                .map((item) => ({
+                    value: item.ingredient_id,
+                    label:
+                        item.ingredient_name[0].toUpperCase() +
+                        item.ingredient_name.slice(1),
+                }));
+
+            if (newSelections.length > 0) {
+                const updated = [...selectedIngredients, ...newSelections];
+                setSelectedIngredients(updated);
+                setData(
+                    "ingredients",
+                    updated.map((v) => v.value),
+                );
+            }
+        } catch (err) {
+            // silent fail by requirement
+        } finally {
+            setIsInferencing(false);
+        }
+    }
+
+    function handleUploadFromDeviceClick() {
+        setCameraMenuOpen(false);
+        fileInputRef.current?.click();
+    }
+
+    function handleTakePhotoClick() {
+        setCameraMenuOpen(false);
+
+        if (canUseCamera()) {
+            setShowIngredientsCamera(true);
+        } else {
+            cameraInputRef.current?.click();
+        }
+    }
+
+    function handleUploadFileChange(e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        detectIngredientsFromImage(file);
+        e.target.value = "";
+    }
+
+    function handleCameraFileChange(e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        detectIngredientsFromImage(file);
+        e.target.value = "";
+    }
+
+    function handleCameraCapture(file) {
+        detectIngredientsFromImage(file);
+        setShowIngredientsCamera(false);
     }
 
     return (
@@ -257,8 +372,7 @@ export default function CustomSearchRecipes({
                             placeholder="Type dietary preference..."
                         />
 
-                        {/* this select ingredients */}
-                        <CustomDatalist
+                    <CustomDatalist
                             useCamera={true}
                             label="Select Ingredients"
                             options={(ingredients || []).map((i) => ({
@@ -270,7 +384,57 @@ export default function CustomSearchRecipes({
                             value={selectedIngredients}
                             onChange={handleIngredientsChange}
                             placeholder="Type ingredients you have..."
+                            cameraMenuOpen={cameraMenuOpen}
+                            onCameraClick={() =>
+                                setCameraMenuOpen((prev) => !prev)
+                            }
+                            onCameraMenuClose={() => setCameraMenuOpen(false)}
+                            cameraMenu={
+                                <div
+                                    className={`dropdown-menu camera-action-menu ${
+                                        cameraMenuOpen ? "open" : ""
+                                    }`}
+                                >
+                                    <div
+                                        className="dropdown-item"
+                                        onClick={handleTakePhotoClick}
+                                    >
+                                        Take a Photo
+                                    </div>
+                                    <div
+                                        className="dropdown-item"
+                                        onClick={handleUploadFromDeviceClick}
+                                    >
+                                        Upload from Device
+                                    </div>
+                                </div>
+                            }
+                            isLoading={isInferencing}
                         />
+
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            hidden
+                            onChange={handleUploadFileChange}
+                        />
+
+                        <input
+                            ref={cameraInputRef}
+                            type="file"
+                            accept="image/*"
+                            capture="environment"
+                            hidden
+                            onChange={handleCameraFileChange}
+                        />
+
+                        {showIngredientsCamera && (
+                            <CameraCaptureModal
+                                onCapture={handleCameraCapture}
+                                onClose={() => setShowIngredientsCamera(false)}
+                            />
+                        )}
 
                         <div className="mt-1 custom-search-form-btns">
                             <button

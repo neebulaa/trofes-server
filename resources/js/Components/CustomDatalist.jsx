@@ -8,6 +8,11 @@ export default function CustomDatalist({
     placeholder = "Search...",
     className,
     useCamera = false,
+    onCameraClick,
+    onCameraMenuClose,
+    cameraMenu,
+    cameraMenuOpen = false,
+    isLoading = false,
 }) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
@@ -17,13 +22,20 @@ export default function CustomDatalist({
         function handleClickOutside(e) {
             if (ref.current && !ref.current.contains(e.target)) {
                 setOpen(false);
+                onCameraMenuClose?.();
             }
         }
 
         document.addEventListener("mousedown", handleClickOutside);
         return () =>
             document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+    }, [onCameraMenuClose]);
+
+    useEffect(() => {
+        if (cameraMenuOpen) {
+            setOpen(false);
+        }
+    }, [cameraMenuOpen]);
 
     // Filter options & remove already selected
     const filteredOptions = options.filter(
@@ -91,15 +103,39 @@ export default function CustomDatalist({
                             type="text"
                             value={query}
                             placeholder={placeholder}
-                            onFocus={() => setOpen(true)}
+                            onFocus={() => {
+                                onCameraMenuClose?.();
+                                setOpen(true)
+                            }}
                             onChange={(e) => {
                                 setQuery(e.target.value);
                                 setOpen(true);
                             }}
                             onKeyDown={handleKeyDown}
                         />
-                        <span className="identifier">Camera</span>
+                        <span
+                            className="identifier"
+                            role="button"
+                            tabIndex={0}
+                            onClick={onCameraClick}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    onCameraClick?.();
+                                }
+                            }}
+                            style={{
+                                cursor: "pointer",
+                            }}
+                        >
+                            <i className="fa-solid fa-camera"></i>
+                        </span>
                     </div>
+                )}
+
+                {cameraMenu}
+
+                {isLoading && (
+                    <small className="loading-text">Inferencing...</small>
                 )}
 
                 {/* Selected items */}

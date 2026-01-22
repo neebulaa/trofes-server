@@ -245,6 +245,11 @@ select:focus,
     border-right: 1px solid var(--neutral-500);
 }
 
+.input-group-identifier .identifier i {
+    font-size: 1.3rem;
+    color: var(--neutral-600);
+}
+
 .input-group-identifier .identifier {
     border-right: none;
     border-left: 1px solid var(--neutral-500);
@@ -258,8 +263,8 @@ select:focus,
     padding: 0;
 }
 
-.datalist-input:has(.input-group-identifier + .list-items)
-    .input-group-identifier {
+.datalist-input:has(.input-group-identifier ~ .list-items) .input-group-identifier,
+.datalist-input:has(.input-group-identifier ~ .loading-text) {
     border-bottom: 1px solid var(--neutral-500);
     border-radius: 6px 6px 0 0;
 }
@@ -278,6 +283,42 @@ select:focus,
 
 .input-sm .datalist-input:has(.input-group-identifier) .remove-all-btn {
     padding: 0 0.875rem 0.5rem !important;
+}
+
+.datalist-input:has(.input-group-identifier) .loading-text {
+    padding: 0 0.875rem 0.75rem;
+}
+
+.input-sm .datalist-input:has(.input-group-identifier) .loading-text {
+    padding: 0 0.625rem 0.5rem !important;
+}
+
+.loading-text {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+}
+
+.loading-text::after {
+    content: "";
+    width: 0.9rem;
+    height: 0.9rem;
+    border: 2px solid rgba(107, 114, 128, 0.3);
+    border-top-color: #6b7280;
+    border-radius: 50%;
+    display: inline-block;
+    animation: loading-spin 0.8s linear infinite;
+}
+
+@keyframes loading-spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* custom file input */
@@ -741,6 +782,7 @@ select:focus,
 
 .dropdown-menu.open {
     opacity: 1;
+    pointer-events: auto;
 }
 
 .profile-dropdown .dropdown-menu {
@@ -1182,6 +1224,11 @@ select:focus,
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
+}
+
+.modal-actions .btn {
+    flex: 1;
+    margin-top: 1rem;
 }
 
 .instructions {
